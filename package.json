@@ -1,0 +1,89 @@
+{
+  "name": "@t00nday/nestjs-got",
+  "version": "0.0.1",
+  "description": "A simple nestjs http module built on got",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "tests": "tests"
+  },
+  "scripts": {
+    "build": "rimraf -rf dist && tsc -p tsconfig.json",
+    "lint": "eslint 'lib/**/*.ts' --fix",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public",
+    "prepublish:next": "npm run build",
+    "publish:next": "npm publish --access public --tag next",
+    "test:unit": "jest --config jest.config.js",
+    "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
+    "test:cov": "jest --config ./tests/jest-e2e.json --runInBand --coverage",
+    "prerelease": "npm run build",
+    "release": "release-it"
+  },
+  "keywords": [
+    "nestjs-got",
+    "nestjs got",
+    "nestjs-http",
+    "nestjs http",
+    "ReactiveX",
+    "Observer pattern",
+    "Observables"
+  ],
+  "author": "B'Tunde Aromire",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
+    "@commitlint/prompt-cli": "8.3.5",
+    "@compodoc/compodoc": "1.1.11",
+    "@nestjs/common": "7.0.9",
+    "@nestjs/core": "7.0.9",
+    "@nestjs/platform-express": "7.0.9",
+    "@nestjs/testing": "7.0.9",
+    "@types/jest": "25.1.1",
+    "@types/node": "13.9.4",
+    "@types/rimraf": "3.0.0",
+    "@typescript-eslint/eslint-plugin": "2.30.0",
+    "@typescript-eslint/parser": "2.30.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-import": "2.20.2",
+    "faker": "5.0.0",
+    "got": "11.6.2",
+    "husky": "4.2.3",
+    "jest": "25.5.2",
+    "lint-staged": "10.2.1",
+    "prettier": "2.0.5",
+    "reflect-metadata": "0.1.13",
+    "release-it": "13.5.7",
+    "rimraf": "3.0.2",
+    "rxjs": "6.5.5",
+    "ts-jest": "25.1.0",
+    "typescript": "3.8.3"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.10.0 || ^7.0.0",
+    "got": "^11.6.2",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toondaey/nestjs-got.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toondaey/nestjs-got/issues"
+  },
+  "homepage": "https://github.com/toondaey/nestjs-got#readme"
+}
