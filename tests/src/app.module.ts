@@ -1,15 +1,16 @@
 import { Module, DynamicModule } from '@nestjs/common';
 
-import { HttpModule } from '../../lib';
-import { HTTP_CONFIG } from '../shared/mailerConfig';
-import { HttpConfigService } from './http-config.service';
+import { GotModule } from '../../lib';
+import { GOT_CONFIG } from '../shared/gotConfig';
+import { GotConfigService } from './got-config.service';
 
 @Module({})
 export class AppModule {
     static withRegister(): DynamicModule {
         return {
             module: AppModule,
-            imports: [HttpModule.register(HTTP_CONFIG)],
+            imports: [GotModule.register(GOT_CONFIG)],
+            exports: [GotModule],
         };
     }
 
@@ -17,8 +18,8 @@ export class AppModule {
         return {
             module: AppModule,
             imports: [
-                HttpModule.registerAsync({
-                    useFactory: () => HTTP_CONFIG,
+                GotModule.registerAsync({
+                    useFactory: () => GOT_CONFIG,
                 }),
             ],
         };
@@ -28,8 +29,8 @@ export class AppModule {
         return {
             module: AppModule,
             imports: [
-                HttpModule.registerAsync({
-                    useClass: HttpConfigService,
+                GotModule.registerAsync({
+                    useClass: GotConfigService,
                 }),
             ],
         };

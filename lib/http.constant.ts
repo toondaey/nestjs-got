@@ -1,3 +1,0 @@
-export const HTTP_OPTIONS = 'HTTP_OPTIONS';
-
-export const HTTP_INSTANCE = 'HTTP_INSTANCE';

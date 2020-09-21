@@ -4,22 +4,22 @@ import {
     InstanceDefaults,
     CancelableRequest,
     OptionsOfJSONResponseBody,
-} from 'got/dist/source';
+} from 'got';
 import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { HTTP_INSTANCE } from './http.constant';
+import { GOT_INSTANCE } from './got.constant';
 
 @Injectable()
-export class HttpService<T = any> {
+export class GotService {
     readonly defaults: InstanceDefaults;
     private _request!: CancelableRequest;
 
-    constructor(@Inject(HTTP_INSTANCE) private readonly got: Got) {
+    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {
         this.defaults = this.got.defaults;
     }
 
-    head<T = any>(
+    head<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
@@ -33,39 +33,35 @@ export class HttpService<T = any> {
         return this.makeObservable<T>('get', url, options);
     }
 
-    post<T = any>(
+    post<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
         return this.makeObservable<T>('post', url, options);
     }
 
-    put<T = any>(
+    put<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
         return this.makeObservable<T>('put', url, options);
     }
 
-    patch<T = any>(
+    patch<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
         return this.makeObservable<T>('patch', url, options);
     }
 
-    delete<T = any>(
+    delete<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
         return this.makeObservable<T>('delete', url, options);
     }
 
-    private set request(value: CancelableRequest) {
-        this._request = value;
-    }
-
-    getRequest(): CancelableRequest {
+    get request(): CancelableRequest {
         return this._request;
     }
 
@@ -77,7 +73,9 @@ export class HttpService<T = any> {
         this._request = this.got[method](url, {
             ...options,
             responseType: 'json',
+            ...this.defaults,
         });
+
         return new Observable((subscriber: Subscriber<any>) => {
             this._request
                 .then(response => subscriber.next(response))
