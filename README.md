@@ -1,6 +1,6 @@
 ## Nestjs Got
 
-This is a simple nestjs module that exposes the [got](https://www.npmjs.com/package/got) http package by exporting the `GotService` after module registration.
+This is a simple nestjs module that exposes the [got](https://www.npmjs.com/package/got) http package by exporting the `GotService` after module registration while leveraging the Reactive Programming Pattern provided by [rxjs](https://rxjs-dev.firebaseapp.com/guide/overview).
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
