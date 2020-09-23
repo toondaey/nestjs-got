@@ -18,7 +18,7 @@
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:cov": "jest --config ./tests/jest-e2e.json --runInBand --coverage",
     "prerelease": "npm run build",
-    "release": "dotenv release-it"
+    "release": "dotenv release-it --"
   },
   "keywords": [
     "nestjs-got",
