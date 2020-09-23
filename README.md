@@ -3,8 +3,16 @@
 This is a simple nestjs module that exposes the [got](https://www.npmjs.com/package/got) http package by exporting the `GotService` after module registration while leveraging the Reactive Programming Pattern provided by [rxjs](https://rxjs-dev.firebaseapp.com/guide/overview).
 
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-  <a href="https://www.npmjs.com/package/got" target="blank"><img src="https://raw.githubusercontent.com/sindresorhus/got/HEAD/media/logo.svg" width="280" alt="Got Logo" /></a>
+  <a href="http://nestjs.com/" target="_blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://www.npmjs.com/package/got" target="_blank"><img src="https://raw.githubusercontent.com/sindresorhus/got/HEAD/media/logo.svg" width="280" alt="Got Logo" /></a>
+</p>
+
+<p align='center'>
+    <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target='_blank'><img alt="npm" src="https://img.shields.io/npm/dm/@t00nday/nestjs-got" alt="NPM Downloads"></a>
+    <a href="https://coveralls.io/github/toondaey/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="Coveralls github" src="https://img.shields.io/coveralls/github/toondaey/nestjs-got"></a>
+    <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="npm version" src="https://img.shields.io/npm/v/@t00nday/nestjs-got"></a>
+    <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="LICENCE" src="https://img.shields.io/npm/l/@t00nday/nestjs-got"></a>
+    <a href="https://circleci.com/gh/toondaey/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="CircleCI build" src="https://img.shields.io/circleci/build/gh/toondaey/nestjs-got/master"></a>
 </p>
 
 <details>
