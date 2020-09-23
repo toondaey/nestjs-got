@@ -90,5 +90,8 @@
   "bugs": {
     "url": "https://github.com/toondaey/nestjs-got/issues"
   },
-  "homepage": "https://github.com/toondaey/nestjs-got#readme"
+  "homepage": "https://github.com/toondaey/nestjs-got#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
