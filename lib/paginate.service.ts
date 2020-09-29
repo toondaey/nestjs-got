@@ -30,17 +30,17 @@ export class PaginationService extends AbstractService {
         return this.makeObservable<T, R>('all', url, options);
     }
 
-    private makeObservable<T, R = unknown>(
+    private makeObservable<T, R>(
         method: 'all',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
     ): Observable<T[]>;
-    private makeObservable<T, R = unknown>(
+    private makeObservable<T, R>(
         method: 'each',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
     ): Observable<T>;
-    private makeObservable<T, R = unknown>(
+    private makeObservable<T, R>(
         method: 'each' | 'all',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,

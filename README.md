@@ -143,14 +143,14 @@ The `GotModuleOptions` is an alias for the `got` package's `ExtendOptions` hence
 
 ## API Methods
 
-The module currently only exposes the basic JSON HTTP verbs through the GotService i.e. `get`, `head`, `post`, `put`, `patch` and `delete`.
+The module currently only exposes the basic JSON HTTP verbs, as well as the pagination methods through the `GotService`.
 
-All these methods support the same argument inputs i.e.:
+For all JSON HTTP verbs - `get`, `head`, `post`, `put`, `patch` and `delete` - which are also the exposed methods, below is the the method signature where `method: string` **MUST** be any of their corresponding verbs.
 
 ```ts
 // This is just used to explain the methods as this code doesn't exist in the package
 import { Observable } from 'rxjs';
-immport { Response, OptionsOfJSONResponseBody } from 'got';
+import { Response, OptionsOfJSONResponseBody } from 'got';
 
 interface GotServiceInterface {
     [method: string]: (
@@ -160,13 +160,45 @@ interface GotServiceInterface {
 }
 ```
 
+For all pagination methods - `each` and `all`, below is the method signature each of them.
+
+```ts
+// This is just used to explain the methods as this code doesn't exist in the package
+import { Observable } from 'rxjs';
+import { Response, OptionsOfJSONResponseBody } from 'got';
+
+interface GotServiceInterface {
+    [method: string]: <T = any, R = unknown>(
+        url: string | URL,
+        options?: OptionsWithPagination<T, R>,
+    ) => Observable<T | T[]>;
+}
+```
+
+A usage example of would be:
+
+```ts
+@Controller()
+export class ExampleController {
+    constructor(private readonly gotService: GotService) {}
+
+    controllerMethod() {
+        // ...
+        this.gotService.pagination.all(someUrl, withOptions); // Returns Observable<T[]>
+        // or
+        this.gotService.pagination.each(someUrl, withOptions); // Returns Observable<T>
+        // ...
+    }
+}
+```
+
+For more information of the usage pattern, please check [here](https://www.npmjs.com/package/got#pagination-1)
+
 ## ToDos
 
 As stated above, this module only support some http verbs, however, the following are still in progress:
 
-1. Support for pagination
-
-2. Support for a `StreamService` which is supported by the **got** package itself.
+1. Support for a `StreamService` which is supported by the **got** package itself.
 
 ## Contributing
 
