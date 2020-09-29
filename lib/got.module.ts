@@ -7,10 +7,11 @@ import {
     GotModuleAsyncOptions,
     GotModuleOptionsFactory,
 } from './got.interface';
+import { PaginationService } from './paginate.service';
 import { GOT_INSTANCE, GOT_OPTIONS } from './got.constant';
 
 @Module({
-    providers: [GotService],
+    providers: [GotService, PaginationService],
     exports: [GotService],
 })
 export class GotModule {

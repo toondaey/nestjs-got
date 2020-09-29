@@ -1,8 +1,11 @@
-import * as faker from 'faker';
+// prettier-ignore
+import {
+    OptionsWithPagination,
+    OptionsOfJSONResponseBody,
+} from 'got';
 import { Injectable } from '@nestjs/common';
 
 import { GotService } from '../../lib';
-import { OptionsOfJSONResponseBody } from 'got/dist/source';
 
 @Injectable()
 export class AppService {

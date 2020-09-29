@@ -7,39 +7,39 @@ import { GOT_INSTANCE } from './got.constant';
 import { PaginationService } from './paginate.service';
 
 describe('GotService', () => {
-    let service: GotService;
+    let service: PaginationService;
     const gotInstance: Partial<Got> = {
             defaults: {
                 options: jest.fn(),
             } as any,
         },
-        exemptedKeys = ['makeObservable', 'request', 'defaults', 'constructor'];
+        exemptedKeys = ['makeObservable', 'defaults', 'constructor'];
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                GotService,
+                PaginationService,
                 {
                     provide: GOT_INSTANCE,
                     useValue: gotInstance,
                 },
                 {
-                    provide: PaginationService,
+                    provide: GotService,
                     useValue: {},
                 },
             ],
         }).compile();
 
-        service = module.get<GotService>(GotService);
+        service = module.get<PaginationService>(PaginationService);
     });
 
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
 
-    const methods = Object.getOwnPropertyNames(GotService.prototype).filter(
-        key => !~exemptedKeys.indexOf(key),
-    );
+    const methods = Object.getOwnPropertyNames(
+        PaginationService.prototype,
+    ).filter(key => !~exemptedKeys.indexOf(key));
 
     methods.forEach((key, index) => {
         it(`${key}()`, complete => {
@@ -75,8 +75,6 @@ describe('GotService', () => {
                         expect(error).toBeInstanceOf(HTTPError);
                     },
                 });
-
-                expect(service.request).toBeTruthy();
             });
         }
     });

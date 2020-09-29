@@ -1,7 +1,6 @@
 import {
     Got,
     Response,
-    InstanceDefaults,
     CancelableRequest,
     OptionsOfJSONResponseBody,
 } from 'got';
@@ -9,14 +8,18 @@ import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { GOT_INSTANCE } from './got.constant';
+import { AbstractService } from './abstrace.service';
+import { PaginationService } from './paginate.service';
 
 @Injectable()
-export class GotService {
-    readonly defaults: InstanceDefaults;
-    private _request!: CancelableRequest;
+export class GotService extends AbstractService {
+    protected _request!: CancelableRequest<Response<any>>;
 
-    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {
-        this.defaults = this.got.defaults;
+    constructor(
+        @Inject(GOT_INSTANCE) got: Got,
+        readonly pagination: PaginationService,
+    ) {
+        super(got);
     }
 
     head<T = Record<string, any> | []>(
@@ -70,33 +73,35 @@ export class GotService {
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
-        this._request = this.got[method](url, {
+        this._request = this.got[method]<T>(url, {
             ...options,
             responseType: 'json',
             ...this.defaults,
         });
 
-        return new Observable((subscriber: Subscriber<any>) => {
-            this._request
-                .then(response => subscriber.next(response))
-                .catch(
-                    (
-                        error: Pick<
-                            Got,
-                            | 'ReadError'
-                            | 'HTTPError'
-                            | 'ParseError'
-                            | 'CacheError'
-                            | 'UploadError'
-                            | 'CancelError'
-                            | 'RequestError'
-                            | 'TimeoutError'
-                            | 'MaxRedirectsError'
-                            | 'UnsupportedProtocolError'
-                        >,
-                    ) => subscriber.error(error),
-                )
-                .finally(() => subscriber.complete());
-        });
+        return new Observable<Response<T>>(
+            (subscriber: Subscriber<Response<T>>) => {
+                this._request
+                    .then((response: Response<T>) => subscriber.next(response))
+                    .catch(
+                        (
+                            error: Pick<
+                                Got,
+                                | 'ReadError'
+                                | 'HTTPError'
+                                | 'ParseError'
+                                | 'CacheError'
+                                | 'UploadError'
+                                | 'CancelError'
+                                | 'RequestError'
+                                | 'TimeoutError'
+                                | 'MaxRedirectsError'
+                                | 'UnsupportedProtocolError'
+                            >,
+                        ) => subscriber.error(error),
+                    )
+                    .finally(() => subscriber.complete());
+            },
+        );
     }
 }
