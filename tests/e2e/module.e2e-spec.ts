@@ -8,6 +8,7 @@ import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
@@ -248,6 +249,59 @@ describe('GotModule', () => {
                         });
                     },
                 );
+            });
+
+            describe('PaginationService', () => {
+                let paginateService: PaginateService;
+
+                beforeEach(async () => {
+                    module = await Test.createTestingModule({
+                        imports: [AppModule.withRegister()],
+                        providers: [PaginateService],
+                        exports: [PaginateService],
+                    }).compile();
+
+                    paginateService = module.get<PaginateService>(
+                        PaginateService,
+                    );
+                });
+
+                const paginateMethod = getMethods<PaginateService>(
+                    PaginateService,
+                );
+
+                paginateMethod.forEach(key => {
+                    it(`${key}()`, async () => {
+                        const url = faker.internet.url();
+                        const route = faker.internet.domainWord();
+                        const object = {
+                            name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+                        };
+                        const response = [object];
+
+                        nock(url)
+                            .get(`/${route}`)
+                            .reply(HttpStatus.OK, response, {
+                                'Content-Type': 'application/json',
+                            });
+
+                        if (key === 'all') {
+                            paginateService.all(`${url}/${route}`).subscribe({
+                                next(res) {
+                                    expect(res).toEqual(
+                                        expect.arrayContaining(response),
+                                    );
+                                },
+                            });
+                        } else {
+                            expect(
+                                await paginateService
+                                    .each(`${url}/${route}`)
+                                    .toPromise(),
+                            ).toEqual(expect.objectContaining(object));
+                        }
+                    });
+                });
             });
         });
     });
