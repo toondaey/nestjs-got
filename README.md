@@ -184,9 +184,9 @@ export class ExampleController {
 
     controllerMethod() {
         // ...
-        this.gotService.pagination.all(someUrl, withOptions); // Returns Observable<T[]>
+        this.gotService.pagination.all<T>(someUrl, withOptions); // Returns Observable<T[]>
         // or
-        this.gotService.pagination.each(someUrl, withOptions); // Returns Observable<T>
+        this.gotService.pagination.each<T>(someUrl, withOptions); // Returns Observable<T>
         // ...
     }
 }
