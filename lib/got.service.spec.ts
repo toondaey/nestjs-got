@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { GotService } from './got.service';
 import { GOT_INSTANCE } from './got.constant';
+import { StreamService } from './stream.service';
 import { PaginationService } from './paginate.service';
 
 describe('GotService', () => {
@@ -25,6 +26,10 @@ describe('GotService', () => {
                 },
                 {
                     provide: PaginationService,
+                    useValue: {},
+                },
+                {
+                    provide: StreamService,
                     useValue: {},
                 },
             ],

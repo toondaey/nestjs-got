@@ -1,14 +1,15 @@
 import * as nock from 'nock';
 import * as faker from 'faker';
 import { Got, RequestError } from 'got';
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
+import { StreamTestService } from '../src/stream.service';
 import { PaginateService } from '../src/paginate.service';
-import { HttpStatus } from '@nestjs/common';
 
 describe('GotModule', () => {
     let module: TestingModule, gotInstance: Got;
@@ -160,14 +161,53 @@ describe('GotModule', () => {
                                 },
                             });
                         } else {
-                            expect(
-                                await paginateService
-                                    .each(`${url}/${route}`)
-                                    .toPromise(),
-                            ).toEqual(expect.objectContaining(object));
+                            paginateService.each(`${url}/${route}`).subscribe({
+                                next(response) {
+                                    expect(response).toEqual(
+                                        expect.objectContaining(object),
+                                    );
+                                },
+                            });
                         }
                     });
                 });
+            });
+
+            describe('StreamService', () => {
+                let streamService: StreamTestService;
+
+                beforeEach(async () => {
+                    module = await Test.createTestingModule({
+                        imports: [AppModule.withRegister()],
+                        providers: [StreamTestService],
+                        exports: [StreamTestService],
+                    }).compile();
+
+                    streamService = module.get<StreamTestService>(
+                        StreamTestService,
+                    );
+                });
+
+                ['get', 'head', 'delete', 'post', 'put', 'patch'].forEach(
+                    key => {
+                        it(`${key}()`, () => {
+                            const url = faker.internet.url();
+                            const route = faker.internet.domainWord();
+
+                            nock(url)
+                                [key](`/${route}`)
+                                .reply(HttpStatus.OK, 'Test');
+
+                            streamService[key](`${url}/${route}`).subscribe({
+                                next(response) {
+                                    expect(response.toString()).toEqual(
+                                        expect.any(String),
+                                    );
+                                },
+                            });
+                        });
+                    },
+                );
             });
         });
     });

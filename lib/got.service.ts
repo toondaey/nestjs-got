@@ -8,6 +8,7 @@ import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { GOT_INSTANCE } from './got.constant';
+import { StreamService } from './stream.service';
 import { AbstractService } from './abstrace.service';
 import { PaginationService } from './paginate.service';
 
@@ -16,6 +17,7 @@ export class GotService extends AbstractService {
     protected _request!: CancelableRequest<Response<any>>;
 
     constructor(
+        readonly stream: StreamService,
         @Inject(GOT_INSTANCE) got: Got,
         readonly pagination: PaginationService,
     ) {
@@ -82,25 +84,9 @@ export class GotService extends AbstractService {
         return new Observable<Response<T>>(
             (subscriber: Subscriber<Response<T>>) => {
                 this._request
-                    .then((response: Response<T>) => subscriber.next(response))
-                    .catch(
-                        (
-                            error: Pick<
-                                Got,
-                                | 'ReadError'
-                                | 'HTTPError'
-                                | 'ParseError'
-                                | 'CacheError'
-                                | 'UploadError'
-                                | 'CancelError'
-                                | 'RequestError'
-                                | 'TimeoutError'
-                                | 'MaxRedirectsError'
-                                | 'UnsupportedProtocolError'
-                            >,
-                        ) => subscriber.error(error),
-                    )
-                    .finally(() => subscriber.complete());
+                    .then(subscriber.next.bind(subscriber))
+                    .catch(subscriber.error.bind(subscriber))
+                    .finally(subscriber.complete.bind(subscriber));
             },
         );
     }

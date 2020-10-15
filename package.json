@@ -93,5 +93,8 @@
   "homepage": "https://github.com/toondaey/nestjs-got#readme",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "split": "1.0.1"
   }
 }
