@@ -52,7 +52,7 @@
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.20.2",
     "faker": "5.0.0",
-    "got": "11.6.2",
+    "got": "11.7.0",
     "husky": "4.2.3",
     "jest": "25.5.2",
     "lint-staged": "10.2.1",

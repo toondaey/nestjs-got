@@ -45,7 +45,7 @@ export class PaginationService extends AbstractService {
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
     ): Observable<T | T[]> {
-        options = { ...options, ...this.defaults };
+        options = { ...options, ...this.defaults, isStream: false };
 
         if (method === 'all') {
             return scheduled(

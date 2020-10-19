@@ -78,6 +78,7 @@ export class GotService extends AbstractService {
         this._request = this.got[method]<T>(url, {
             ...options,
             responseType: 'json',
+            isStream: false,
             ...this.defaults,
         });
 

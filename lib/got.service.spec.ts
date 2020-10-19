@@ -10,11 +10,16 @@ import { PaginationService } from './paginate.service';
 describe('GotService', () => {
     let service: GotService;
     const gotInstance: Partial<Got> = {
-            defaults: {
-                options: jest.fn(),
-            } as any,
-        },
-        exemptedKeys = ['makeObservable', 'request', 'defaults', 'constructor'];
+        defaults: {
+            options: jest.fn(),
+        } as any,
+    };
+    const exemptedKeys = [
+        'makeObservable',
+        'request',
+        'defaults',
+        'constructor',
+    ];
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({

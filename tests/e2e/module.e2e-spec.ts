@@ -1,5 +1,9 @@
+import { join } from 'path';
+import { createReadStream } from 'fs';
+
 import * as nock from 'nock';
 import * as faker from 'faker';
+import { Observable } from 'rxjs';
 import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -56,6 +60,19 @@ describe('GotModule', () => {
             });
         });
 
+        describe('useExisting', () => {
+            beforeEach(async () => {
+                module = await Test.createTestingModule({
+                    imports: [AppModule.withUseExistingRegisterAsync()],
+                }).compile();
+            });
+
+            it('should register got module using existing', async () => {
+                gotInstance = module.get(GOT_INSTANCE);
+                expect(AppModule.isGotInstance(gotInstance)).toBeTruthy();
+            });
+        });
+
         describe('test features', () => {
             describe('GotService', () => {
                 let appService: AppService;
@@ -82,7 +99,11 @@ describe('GotModule', () => {
                             'Content-Type': 'application/json',
                         });
 
-                        appService[key](`${url}/${route}`).subscribe({
+                        const got = appService[key](`${url}/${route}`);
+
+                        expect(appService.gotService.request).toBeTruthy();
+
+                        got.subscribe({
                             next(response) {
                                 expect(response).toEqual(
                                     expect.objectContaining({ body: res }),
@@ -190,20 +211,40 @@ describe('GotModule', () => {
 
                 ['get', 'head', 'delete', 'post', 'put', 'patch'].forEach(
                     key => {
-                        it(`${key}()`, () => {
-                            const url = faker.internet.url();
-                            const route = faker.internet.domainWord();
+                        it(`${key}()`, complete => {
+                            const uri = faker.internet.url();
+                            let count = 1;
 
-                            nock(url)
-                                [key](`/${route}`)
-                                .reply(HttpStatus.OK, 'Test');
+                            nock(uri)
+                                [key]('/')
+                                .reply(HttpStatus.OK, () =>
+                                    createReadStream(
+                                        join(
+                                            process.cwd(),
+                                            'tests',
+                                            'src',
+                                            'utils',
+                                            'test.txt',
+                                        ),
+                                    ),
+                                );
 
-                            streamService[key](`${url}/${route}`).subscribe({
+                            (streamService[key](uri) as Observable<
+                                Record<string, any> | string
+                            >).subscribe({
                                 next(response) {
-                                    expect(response.toString()).toEqual(
-                                        expect.any(String),
-                                    );
+                                    if (key !== 'post') {
+                                        expect(
+                                            (response as Record<string, any>)
+                                                .id,
+                                        ).toEqual(count++);
+                                    } else {
+                                        expect(response).toEqual(
+                                            expect.any(String),
+                                        );
+                                    }
                                 },
+                                complete,
                             });
                         });
                     },
