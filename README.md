@@ -25,7 +25,11 @@ This is a simple nestjs module that exposes the [got](https://www.npmjs.com/pack
 -   [Usage](#usage)
 -   [Configuration](#configuration)
 -   [API Methods](#api-methods)
--   [ToDos](#todos)
+    <!-- toc -->
+    -   [HTTP](#http)
+    -   [Pagination](#pagination)
+    -   [Stream](#stream)
+        <!-- tocstop -->
 -   [Contributing](#contributing)
     <!-- tocstop -->
     </details>
@@ -143,6 +147,8 @@ The `GotModuleOptions` is an alias for the `got` package's `ExtendOptions` hence
 
 ## API Methods
 
+### HTTP
+
 The module currently only exposes the basic JSON HTTP verbs, as well as the pagination methods through the `GotService`.
 
 For all JSON HTTP verbs - `get`, `head`, `post`, `put`, `patch` and `delete` - which are also the exposed methods, below is the the method signature where `method: string` **MUST** be any of their corresponding verbs.
@@ -159,6 +165,8 @@ interface GotServiceInterface {
     ) => Observable<Response<T>>;
 }
 ```
+
+### Pagination
 
 For all pagination methods - `each` and `all`, below is the method signature each of them.
 
@@ -192,13 +200,9 @@ export class ExampleController {
 }
 ```
 
+### Stream
+
 For more information of the usage pattern, please check [here](https://www.npmjs.com/package/got#pagination-1)
-
-## ToDos
-
-As stated above, this module only support some http verbs, however, the following are still in progress:
-
-1. Support for a `StreamService` which is supported by the **got** package itself.
 
 ## Contributing
 

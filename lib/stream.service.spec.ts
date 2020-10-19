@@ -1,11 +1,10 @@
 import * as faker from 'faker';
-import { Readable } from 'stream';
+import { Duplex, Readable } from 'stream';
 import { Observable } from 'rxjs';
 import { Got, GotStream } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GOT_INSTANCE } from './got.constant';
-import { SplitOptions } from './got.interface';
 import { StreamService } from './stream.service';
 
 describe('StreamService', () => {
@@ -34,7 +33,7 @@ describe('StreamService', () => {
         expect(service).toBeDefined();
     });
 
-    ['get' /* , 'delete', 'head' */].forEach(verb => {
+    ['get', 'head'].forEach(verb => {
         it(`${verb}()`, complete => {
             class CustomReadable extends Readable {
                 _read() {
@@ -65,24 +64,24 @@ o`.split(/\n/g);
             const readable = new CustomReadable();
 
             (gotInstance.stream as Partial<GotStream>) = {
-                [verb]: jest.fn().mockImplementation(() => readable),
+                [verb]: jest.fn().mockReturnValue(readable),
             };
 
-            (service[verb]<string>('https://reqres.in/api/users', undefined, {
-                // matcher: '\n',
-                // mapper: ()
-            } as SplitOptions) as Observable<string>).subscribe({
+            (service[verb]<string>(
+                'https://reqres.in/api/users',
+                undefined,
+            ) as Observable<string>).subscribe({
                 next(response) {
-                    console.log(response.toString() + 'one');
+                    expect(response.toString()).toEqual(expect.any(String));
                 },
                 complete,
             });
         });
     });
 
-    ['post', 'put', 'patch'].forEach(verb => {
+    ['post', 'put', 'patch', 'delete'].forEach(verb => {
         it(`${verb}()`, complete => {
-            class CustomReadable extends Readable {
+            class CustomReadable extends Duplex {
                 _read() {
                     let length = 10;
 
@@ -102,7 +101,7 @@ o`.split(/\n/g);
 
             service[verb]<Buffer>(faker.internet.url()).subscribe({
                 next(response) {
-                    console.log(response);
+                    expect(response).toEqual(expect.any(String));
                 },
                 complete,
             });
