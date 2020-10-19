@@ -17,3 +17,9 @@ export interface GotModuleAsyncOptions
     useExisting?: Type<GotModuleOptionsFactory>;
     inject?: any[];
 }
+
+export interface SplitOptions {
+    matcher?: string | RegExp | Function;
+    mapper?: Function;
+    options?: { trailing: boolean; maxLength: number };
+}

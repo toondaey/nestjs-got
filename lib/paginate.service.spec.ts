@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { Got, HTTPError, Response } from 'got';
+import { Got, GotPaginate, HTTPError } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GotService } from './got.service';
@@ -9,11 +9,10 @@ import { PaginationService } from './paginate.service';
 describe('GotService', () => {
     let service: PaginationService;
     const gotInstance: Partial<Got> = {
-            defaults: {
-                options: jest.fn(),
-            } as any,
-        },
-        exemptedKeys = ['makeObservable', 'defaults', 'constructor'];
+        defaults: {
+            options: jest.fn(),
+        } as any,
+    };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -37,45 +36,58 @@ describe('GotService', () => {
         expect(service).toBeDefined();
     });
 
-    const methods = Object.getOwnPropertyNames(
-        PaginationService.prototype,
-    ).filter(key => !~exemptedKeys.indexOf(key));
+    it(`each()`, complete => {
+        async function* asyncIterator() {
+            const itemsCount = faker.random.number(20);
 
-    methods.forEach((key, index) => {
-        it(`${key}()`, complete => {
-            const result: Partial<Response> = { body: {} };
-
-            gotInstance[key] = jest.fn().mockResolvedValueOnce(result);
-
-            service[key](faker.internet.url()).subscribe({
-                next(response) {
-                    expect(response).toBe(result);
-                },
-                complete,
-            });
-        });
-
-        if (methods.length - 2 === index) {
-            it('check that defaults is set', () =>
-                expect('options' in service.defaults).toBe(true));
-
-            it('should get request', () => {
-                service[key](faker.internet.url());
-            });
-
-            it('should check error reporting', () => {
-                const result: any = { body: {}, statusCode: 400 };
-
-                gotInstance[key] = jest
-                    .fn()
-                    .mockRejectedValueOnce(new HTTPError(result));
-
-                service[key](faker.internet.url()).subscribe({
-                    error(error) {
-                        expect(error).toBeInstanceOf(HTTPError);
-                    },
-                });
-            });
+            for (let _ = 0; _ < itemsCount; _++) {
+                yield { a: faker.random.alphaNumeric() };
+            }
         }
+
+        (gotInstance.paginate as Partial<GotPaginate>) = {
+            each: jest.fn().mockImplementation(() => asyncIterator()),
+        };
+
+        service.each(faker.internet.url()).subscribe({
+            next(response) {
+                expect(response).toEqual(
+                    expect.objectContaining({ a: expect.any(String) }),
+                );
+            },
+            complete,
+        });
+    });
+
+    it('all()', complete => {
+        (gotInstance.paginate as Partial<GotPaginate>) = {
+            all: jest.fn().mockResolvedValue([1, 2, 3, 4, 5]),
+        };
+
+        service.all(faker.internet.url()).subscribe({
+            next(response) {
+                expect(response).toEqual(
+                    expect.arrayContaining([expect.any(Number)]),
+                );
+            },
+            complete,
+        });
+    });
+
+    it('check that defaults is set', () =>
+        expect('options' in service.defaults).toBe(true));
+
+    it('should check error reporting', () => {
+        const result: any = { body: {}, statusCode: 400 };
+
+        (gotInstance.paginate as Partial<GotPaginate>) = {
+            all: jest.fn().mockRejectedValueOnce(new HTTPError(result)),
+        };
+
+        service.all(faker.internet.url()).subscribe({
+            error(error) {
+                expect(error).toBeInstanceOf(HTTPError);
+            },
+        });
     });
 });

@@ -9,7 +9,7 @@ import { GotService } from '../../lib';
 
 @Injectable()
 export class AppService {
-    constructor(private readonly gotService: GotService) {}
+    constructor(readonly gotService: GotService) {}
 
     head(url: string, options?: OptionsOfJSONResponseBody) {
         return this.gotService.head(url, options);

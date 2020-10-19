@@ -1,18 +1,19 @@
 import got from 'got';
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 
-import { GotService } from './got.service';
 import {
     GotModuleOptions,
     GotModuleAsyncOptions,
     GotModuleOptionsFactory,
 } from './got.interface';
+import { GotService } from './got.service';
+import { StreamService } from './stream.service';
 import { PaginationService } from './paginate.service';
 import { GOT_INSTANCE, GOT_OPTIONS } from './got.constant';
 
 @Module({
-    providers: [GotService, PaginationService],
     exports: [GotService],
+    providers: [GotService, PaginationService, StreamService],
 })
 export class GotModule {
     static register(options: GotModuleOptions = {}): DynamicModule {
