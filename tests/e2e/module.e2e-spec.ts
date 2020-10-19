@@ -243,6 +243,7 @@ describe('GotModule', () => {
                                             expect(e.id).toEqual(++start),
                                         );
                                 },
+                                complete,
                             });
 
                             streamService.on('end').subscribe(complete);
