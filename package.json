@@ -67,7 +67,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^6.10.0 || ^7.0.0",
-    "got": "^11.6.2",
+    "got": "^11.7.0",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.0.0"
   },

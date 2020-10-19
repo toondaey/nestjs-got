@@ -158,8 +158,9 @@ For all JSON HTTP verbs - `get`, `head`, `post`, `put`, `patch` and `delete` - w
 import { Observable } from 'rxjs';
 import { Response, OptionsOfJSONResponseBody } from 'got';
 
-interface GotServiceInterface {
-    [method: string]: (
+interface GotInterface {
+    // prettier-ignore
+    [method: string]: ( // i.e. 'get', 'head', 'post', 'put' or 'delete' method
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ) => Observable<Response<T>>;
@@ -175,15 +176,15 @@ For all pagination methods - `each` and `all`, below is the method signature eac
 import { Observable } from 'rxjs';
 import { Response, OptionsOfJSONResponseBody } from 'got';
 
-interface GotServiceInterface {
-    [method: string]: <T = any, R = unknown>(
+interface PaginateInterface {
+    [method: string]: <T = any, R = unknown>( // i.e 'all' or 'each' method
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
     ) => Observable<T | T[]>;
 }
 ```
 
-A usage example of would be:
+Usage examples:
 
 ```ts
 @Controller()
@@ -201,6 +202,102 @@ export class ExampleController {
 ```
 
 ### Stream
+
+The stream feature is divided into two parts. This is because (and as stated in the documentation [here](https://www.npmjs.com/package/got#streams)), while the stream request is actually a `stream.Duplex` the _GET_ and _HEAD_ requests return a `stream.Readable` and the _POST_, _PUT_, _PATCH_ and _DELETE_ return a `stream.Writable`.
+
+This prompted an implementation that attempts to cover both scenarios. The difference is only present in the arguments acceptable by their respective methods.
+
+Further, this module employs the services of the [split](https://npmjs.com/package/split) package for better optimization and to "break up a stream and reassemble it so that each line is a chunk...". Hence, all methods of stream accept a 3rd argument for the split function configuration.
+
+For _GET_ and _HEAD_ stream requests, below is the method signature:
+
+```ts
+// This is just used to explain the methods as this code doesn't exist in the package
+import { Observable } from 'rxjs';
+import { StreamOptions } from 'got';
+
+import { SplitOptions } from '@toonday/nestjs-got';
+
+interface StreamInterface {
+    [method: string]: <T = unknown>(
+        url: string | URL,
+        options?: StreamOptions,
+        splitOptions?: SplitOptions,
+    ): Observable<T>;
+}
+```
+
+while that of the _POST_, _PUT_, _PATCH_ and _DELETE_ is:
+
+```ts
+// This is just used to explain the methods as this code doesn't exist in the package
+import { Observable } from 'rxjs';
+import { StreamOptions } from 'got';
+
+import { SplitOptions } from '@toonday/nestjs-got';
+
+interface StreamInterface {
+    [method: string]: <T = unknown>(
+        url: string | URL,
+        filePathOrStream?: string | Readable, // This is relative to 'process.cwd()'
+        options?: StreamOptions,
+        splitOptions?: SplitOptions,
+    ): Observable<T>;
+}
+```
+
+Usage examples:
+
+```ts
+@Controller()
+export class ExampleController {
+    constructor(private readonly gotService: GotService) {}
+
+    controllerMethod() {
+        // ...
+        this.gotService.stream.get<TStreamChunk>(
+            someUrl,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // or
+        this.gotService.stream.head<TStreamChunk>(
+            someUrl,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // or
+        this.gotService.pagination.post<TStreamChunk>(
+            someUrl,
+            filePathOrStream,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // or
+        this.gotService.pagination.put<TStreamChunk>(
+            someUrl,
+            filePathOrStream,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // or
+        this.gotService.pagination.patch<TStreamChunk>(
+            someUrl,
+            filePathOrStream,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // or
+        this.gotService.pagination.delete<TStreamChunk>(
+            someUrl,
+            filePathOrStream,
+            streamOptions,
+            splitOptions,
+        ); // Returns Observable<TStreamChunk>
+        // ...
+    }
+}
+```
 
 For more information of the usage pattern, please check [here](https://www.npmjs.com/package/got#pagination-1)
 
