@@ -14,6 +14,7 @@ import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
 import { StreamTestService } from '../src/stream.service';
 import { PaginateService } from '../src/paginate.service';
+import { StreamService } from '../../lib/stream.service';
 
 describe('GotModule', () => {
     let module: TestingModule, gotInstance: Got;
@@ -211,9 +212,8 @@ describe('GotModule', () => {
 
                 ['get', 'head', 'delete', 'post', 'put', 'patch'].forEach(
                     key => {
-                        it(`${key}()`, complete => {
+                        it(`${key}()`, () => {
                             const uri = faker.internet.url();
-                            let count = 1;
 
                             nock(uri)
                                 [key]('/')
@@ -229,23 +229,23 @@ describe('GotModule', () => {
                                     ),
                                 );
 
-                            (streamService[key](uri) as Observable<
-                                Record<string, any> | string
-                            >).subscribe({
-                                next(response) {
-                                    if (key !== 'post') {
-                                        expect(
-                                            (response as Record<string, any>)
-                                                .id,
-                                        ).toEqual(count++);
-                                    } else {
-                                        expect(response).toEqual(
-                                            expect.any(String),
-                                        );
-                                    }
-                                },
-                                complete,
-                            });
+                            (streamService[key](uri) as StreamService)
+                                .on<Buffer>('data')
+                                .subscribe({
+                                    next(response) {
+                                        let start = 0;
+
+                                        response
+                                            .toString()
+                                            .split(/\r?\n/)
+                                            .map<{ id: number }>(e =>
+                                                JSON.parse(e),
+                                            )
+                                            .forEach(e =>
+                                                expect(e.id).toEqual(++start),
+                                            );
+                                    },
+                                });
                         });
                     },
                 );

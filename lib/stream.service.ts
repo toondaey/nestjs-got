@@ -2,131 +2,112 @@ import { resolve } from 'path';
 import { createReadStream } from 'fs';
 import { Readable, Duplex } from 'stream';
 
-import * as split from 'split';
-import { Observable, Subscriber } from 'rxjs';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions } from 'got';
+import { fromEvent, Observable, throwError } from 'rxjs';
+import { EventListenerOptions } from 'rxjs/internal/observable/fromEvent';
 
 import { GOT_INSTANCE } from './got.constant';
-import { SplitOptions } from './got.interface';
 import { AbstractService } from './abstrace.service';
 
 @Injectable()
 export class StreamService extends AbstractService {
+    _request?: Duplex;
+
     constructor(@Inject(GOT_INSTANCE) got: Got) {
         super(got);
     }
 
-    get<T = unknown>(
-        url: string | URL,
-        options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable(
-            'get',
-            url,
-            undefined,
-            options,
-            splitOptions,
-        );
+    get(url: string | URL, options?: StreamOptions): this {
+        return this.makeObservable('get', url, undefined, options);
     }
 
-    head<T = unknown>(
-        url: string | URL,
-        options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable(
-            'head',
-            url,
-            undefined,
-            options,
-            splitOptions,
-        );
+    head(url: string | URL, options?: StreamOptions): this {
+        return this.makeObservable('head', url, undefined, options);
     }
 
-    delete<T = unknown>(
+    delete(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'delete',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): this {
+        return this.makeObservable('delete', url, filePathOrStream, options);
     }
 
-    post<T = unknown>(
+    post(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'post',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): this {
+        return this.makeObservable('post', url, filePathOrStream, options);
     }
 
-    patch<T = unknown>(
+    patch(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'patch',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): this {
+        return this.makeObservable('patch', url, filePathOrStream, options);
     }
 
-    put<T = unknown>(
+    put(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'put',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): this {
+        return this.makeObservable('put', url, filePathOrStream, options);
     }
 
-    private makeObservable<T = unknown>(
+    on<T = unknown>(
+        eventName:
+            | 'end'
+            | 'data'
+            | 'error'
+            | 'request'
+            | 'readable'
+            | 'response'
+            | 'redirect'
+            | 'uploadProgress'
+            | 'downloadProgress',
+        eventListenerOptions: EventListenerOptions = {},
+    ): Observable<T> {
+        if (!this._request) {
+            return throwError(
+                new InternalServerErrorException(
+                    {
+                        error: 'Invalid or null stream request',
+                    },
+                    'This error is thrown when the request could not be constructed hence, resulting in undefined or null',
+                ),
+            );
+        }
+
+        return fromEvent<T>(this._request, eventName, eventListenerOptions);
+    }
+
+    private makeObservable(
         verb: Extract<HTTPAlias, 'get' | 'head'>,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
-    private makeObservable<T = unknown>(
+    ): this;
+    private makeObservable(
         verb: Extract<HTTPAlias, 'post' | 'put' | 'patch' | 'delete'>,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
-    private makeObservable<T = unknown>(
+    ): this;
+    private makeObservable(
         verb: HTTPAlias,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        { matcher, mapper, options: splitOptions }: SplitOptions = {},
-    ): Observable<T> {
-        const request: Duplex = this.got.stream[verb](url, {
+    ): this {
+        this._request = this.got.stream[verb](url, {
             ...this.defaults,
             ...options,
             isStream: true,
@@ -145,19 +126,25 @@ export class StreamService extends AbstractService {
             }
 
             if (filePathOrStream instanceof Readable) {
-                filePathOrStream.on('data', request.write.bind(request));
-                filePathOrStream.on('end', request.end.bind(request));
+                filePathOrStream.on(
+                    'data',
+                    this._request.write.bind(this._request),
+                );
+                filePathOrStream.on(
+                    'end',
+                    this._request.end.bind(this._request),
+                );
             } else {
-                request.end();
+                this._request.end();
             }
         }
 
-        return new Observable<T>((subscriber: Subscriber<T>) => {
-            request
-                .pipe(split(matcher, mapper, splitOptions))
-                .on('data', subscriber.next.bind(subscriber))
-                .on('error', subscriber.error.bind(subscriber))
-                .on('end', subscriber.complete.bind(subscriber));
-        });
+        this._request.on('end', () => (this._request = undefined));
+
+        return this;
+    }
+
+    get request() {
+        return this._request;
     }
 }

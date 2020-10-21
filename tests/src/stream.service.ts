@@ -10,21 +10,15 @@ export class StreamTestService {
     constructor(private readonly gotService: GotService) {}
 
     head(url: string, options?: StreamOptions) {
-        return this.gotService.stream.head(url, options, {
-            matcher: JSON.parse,
-        });
+        return this.gotService.stream.head(url, options);
     }
 
     get(url: string, options?: StreamOptions) {
-        return this.gotService.stream.get(url, options, {
-            matcher: JSON.parse,
-        });
+        return this.gotService.stream.get(url, options);
     }
 
     delete(url: string, options?: StreamOptions) {
-        return this.gotService.stream.delete(url, undefined, options, {
-            matcher: JSON.parse,
-        });
+        return this.gotService.stream.delete(url, undefined, options);
     }
 
     post(url: string, options?: StreamOptions) {
@@ -40,20 +34,14 @@ export class StreamTestService {
             url,
             join('tests', 'src', 'utils', 'test.txt'),
             options,
-            {
-                matcher: JSON.parse,
-            },
         );
     }
 
-    patch(url: string, options?: StreamOptions) {
+    patch<T>(url: string, options?: StreamOptions) {
         return this.gotService.stream.patch(
             url,
             join('tests', 'src', 'utils', 'test.txt'),
             options,
-            {
-                matcher: JSON.parse,
-            },
         );
     }
 }

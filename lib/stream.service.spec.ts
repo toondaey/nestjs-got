@@ -1,6 +1,6 @@
-import * as faker from 'faker';
 import { Duplex, Readable } from 'stream';
-import { Observable } from 'rxjs';
+
+import * as faker from 'faker';
 import { Got, GotStream } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -34,7 +34,7 @@ describe('StreamService', () => {
     });
 
     ['get', 'head'].forEach(verb => {
-        it(`${verb}()`, complete => {
+        it(`${verb}()`, () => {
             class CustomReadable extends Readable {
                 _read() {
                     let length = 0;
@@ -68,19 +68,20 @@ o`.split(/\n/g);
             };
 
             (service[verb]<string>(
-                'https://reqres.in/api/users',
+                faker.internet.url(),
                 undefined,
-            ) as Observable<string>).subscribe({
-                next(response) {
-                    expect(response.toString()).toEqual(expect.any(String));
-                },
-                complete,
-            });
+            ) as StreamService)
+                .on<Buffer>('data')
+                .subscribe({
+                    next(response) {
+                        expect(response.toString()).toEqual(expect.any(String));
+                    },
+                });
         });
     });
 
     ['post', 'put', 'patch', 'delete'].forEach(verb => {
-        it(`${verb}()`, complete => {
+        it(`${verb}()`, () => {
             class CustomReadable extends Duplex {
                 _read() {
                     let length = 10;
@@ -99,12 +100,15 @@ o`.split(/\n/g);
                 [verb]: jest.fn().mockImplementation(() => readable),
             };
 
-            service[verb]<Buffer>(faker.internet.url()).subscribe({
-                next(response) {
-                    expect(response).toEqual(expect.any(String));
-                },
-                complete,
-            });
+            (service[verb](faker.internet.url()) as StreamService)
+                .on<Buffer>('data')
+                .subscribe({
+                    next(response) {
+                        // prettier-ignore
+                        expect(response.toString())
+                            .toEqual(expect.any(String));
+                    },
+                });
         });
     });
 });

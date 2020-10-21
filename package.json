@@ -78,7 +78,7 @@
     }
   },
   "lint-staged": {
-    "*.ts": [
+    "**/*.ts": [
       "prettier --write",
       "npm run lint"
     ]
@@ -93,8 +93,5 @@
   "homepage": "https://github.com/toondaey/nestjs-got#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "split": "1.0.1"
   }
 }
