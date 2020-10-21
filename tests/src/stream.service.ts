@@ -37,11 +37,15 @@ export class StreamTestService {
         );
     }
 
-    patch<T>(url: string, options?: StreamOptions) {
+    patch(url: string, options?: StreamOptions) {
         return this.gotService.stream.patch(
             url,
             join('tests', 'src', 'utils', 'test.txt'),
             options,
         );
+    }
+
+    error() {
+        return this.gotService.stream.on('data');
     }
 }
