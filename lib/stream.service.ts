@@ -16,7 +16,7 @@ import { AbstractService } from './abstrace.service';
 
 @Injectable()
 export class StreamService extends AbstractService {
-    _request?: Duplex;
+    private _request?: Duplex;
 
     constructor(@Inject(GOT_INSTANCE) got: Got) {
         super(got);
@@ -81,7 +81,13 @@ export class StreamService extends AbstractService {
                     {
                         error: 'Invalid or null stream request',
                     },
-                    'This error is thrown when the request could not be constructed hence, resulting in undefined or null',
+                    `[on] should be chained with either of these methods:
+[get];
+[head];
+[post];
+[put];
+[patch]; or
+[delete]`,
                 ),
             );
         }
@@ -113,7 +119,6 @@ export class StreamService extends AbstractService {
             isStream: true,
         });
 
-        // Process requests that are not 'get' or 'head'
         if (!!~['patch', 'post', 'put', 'delete'].indexOf(verb)) {
             if (typeof filePathOrStream === 'string') {
                 filePathOrStream = createReadStream(

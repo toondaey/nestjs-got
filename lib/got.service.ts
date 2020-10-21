@@ -14,7 +14,7 @@ import { PaginationService } from './paginate.service';
 
 @Injectable()
 export class GotService extends AbstractService {
-    protected _request!: CancelableRequest<Response<any>>;
+    protected _request?: CancelableRequest<Response<any>>;
 
     constructor(
         readonly stream: StreamService,
@@ -66,7 +66,7 @@ export class GotService extends AbstractService {
         return this.makeObservable<T>('delete', url, options);
     }
 
-    get request(): CancelableRequest {
+    get request(): CancelableRequest | undefined {
         return this._request;
     }
 
@@ -80,14 +80,17 @@ export class GotService extends AbstractService {
             responseType: 'json',
             isStream: false,
             ...this.defaults,
-        });
+        }) as CancelableRequest<Response<T>>;
 
         return new Observable<Response<T>>(
             (subscriber: Subscriber<Response<T>>) => {
-                this._request
+                (this._request as CancelableRequest<Response<T>>)
                     .then(subscriber.next.bind(subscriber))
                     .catch(subscriber.error.bind(subscriber))
-                    .finally(subscriber.complete.bind(subscriber));
+                    .finally(() => {
+                        this._request = undefined;
+                        subscriber.complete();
+                    });
             },
         );
     }

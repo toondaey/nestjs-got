@@ -21,6 +21,9 @@
     "release": "dotenv release-it --"
   },
   "keywords": [
+    "nest got",
+    "nest-got",
+    "@nestjs/common",
     "nestjs-got",
     "nestjs got",
     "nestjs-http",

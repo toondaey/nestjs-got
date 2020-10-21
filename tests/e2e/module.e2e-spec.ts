@@ -3,9 +3,8 @@ import { createReadStream } from 'fs';
 
 import * as nock from 'nock';
 import * as faker from 'faker';
-import { Observable } from 'rxjs';
 import { Got, RequestError } from 'got';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { getMethods } from '../src/utils';
@@ -196,7 +195,7 @@ describe('GotModule', () => {
             });
 
             describe('StreamService', () => {
-                let streamService: StreamTestService;
+                let streamTestService: StreamTestService;
 
                 beforeEach(async () => {
                     module = await Test.createTestingModule({
@@ -205,7 +204,7 @@ describe('GotModule', () => {
                         exports: [StreamTestService],
                     }).compile();
 
-                    streamService = module.get<StreamTestService>(
+                    streamTestService = module.get<StreamTestService>(
                         StreamTestService,
                     );
                 });
@@ -229,26 +228,40 @@ describe('GotModule', () => {
                                     ),
                                 );
 
-                            (streamService[key](uri) as StreamService)
-                                .on<Buffer>('data')
-                                .subscribe({
-                                    next(response) {
-                                        let start = 0;
+                            const streamService = streamTestService[key](
+                                uri,
+                            ) as StreamService;
 
-                                        response
-                                            .toString()
-                                            .split(/\r?\n/)
-                                            .map<{ id: number }>(e =>
-                                                JSON.parse(e),
-                                            )
-                                            .forEach(e =>
-                                                expect(e.id).toEqual(++start),
-                                            );
-                                    },
-                                });
+                            expect(streamService.request).toBeTruthy();
+
+                            streamService.on<Buffer>('data').subscribe({
+                                next(response) {
+                                    let start = 0;
+
+                                    response
+                                        .toString()
+                                        .split(/\r?\n/)
+                                        .map<{ id: number }>(e => JSON.parse(e))
+                                        .forEach(e =>
+                                            expect(e.id).toEqual(++start),
+                                        );
+                                },
+                            });
+
+                            streamService.on('end').subscribe();
                         });
                     },
                 );
+
+                it('error', () => {
+                    streamTestService.error().subscribe({
+                        error(e) {
+                            expect(e).toBeInstanceOf(
+                                InternalServerErrorException,
+                            );
+                        },
+                    });
+                });
             });
         });
     });
