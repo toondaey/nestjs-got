@@ -3,6 +3,7 @@ import { createReadStream } from 'fs';
 
 import * as nock from 'nock';
 import * as faker from 'faker';
+import { Observable } from 'rxjs';
 import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -242,6 +243,7 @@ describe('GotModule', () => {
                                             expect(e.id).toEqual(++start),
                                         );
                                 },
+                                complete,
                             });
 
                             streamService.on('end').subscribe(complete);

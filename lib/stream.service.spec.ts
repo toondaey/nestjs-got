@@ -1,4 +1,4 @@
-import { Duplex, Readable } from 'stream';
+import { Duplex } from 'stream';
 
 import * as faker from 'faker';
 import { Got, GotStream } from 'got';
@@ -34,25 +34,25 @@ describe('StreamService', () => {
         expect(service).toBeDefined();
     });
 
-    ['get', 'head'].forEach(verb => {
-        it(`${verb}()`, () => {
-            class CustomReadable extends Readable {
+    ['get', 'head', 'post', 'put', 'patch', 'delete'].forEach(verb => {
+        it(`${verb}()`, complete => {
+            class CustomReadable extends Duplex {
                 _read() {
                     let length = 0;
                     const str = `a
-b
-c
-d
-e
-f
-g
-h
-i
-k
-l
-m
-n
-o`.split(/\n/g);
+    b
+    c
+    d
+    e
+    f
+    g
+    h
+    i
+    k
+    l
+    m
+    n
+    o`.split(/\n/g);
 
                     while (length < str.length) {
                         this.push(str[length]);
@@ -68,48 +68,18 @@ o`.split(/\n/g);
                 [verb]: jest.fn().mockReturnValue(readable),
             };
 
-            (service[verb]<string>(
+            const request = service[verb](
                 faker.internet.url(),
-                undefined,
-            ) as StreamRequest)
-                .on<Buffer>('data')
-                .subscribe({
-                    next(response) {
-                        expect(response.toString()).toEqual(expect.any(String));
-                    },
-                });
-        });
-    });
+            ) as StreamRequest;
 
-    ['post', 'put', 'patch', 'delete'].forEach(verb => {
-        it(`${verb}()`, () => {
-            class CustomReadable extends Duplex {
-                _read() {
-                    let length = 10;
-
-                    while (length) {
-                        this.push(length.toString());
-                        length--;
-                    }
-                    this.push(null);
-                }
-            }
-
-            const readable = new CustomReadable();
-
-            (gotInstance.stream as Partial<GotStream>) = {
-                [verb]: jest.fn().mockImplementation(() => readable),
-            };
-
-            (service[verb](faker.internet.url()) as StreamRequest)
-                .on<Buffer>('data')
-                .subscribe({
-                    next(response) {
-                        // prettier-ignore
-                        expect(response.toString())
+            request.on<Buffer>('data').subscribe({
+                next(response) {
+                    // prettier-ignore
+                    expect(response.toString())
                             .toEqual(expect.any(String));
-                    },
-                });
+                },
+            });
+            request.on('end').subscribe(complete);
         });
     });
 });

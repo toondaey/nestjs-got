@@ -14,6 +14,7 @@ This is a simple nestjs module that exposes the [got](https://www.npmjs.com/pack
     <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="LICENCE" src="https://img.shields.io/npm/l/@t00nday/nestjs-got"></a>
     <a href="https://circleci.com/gh/toondaey/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="CircleCI build" src="https://img.shields.io/circleci/build/gh/toondaey/nestjs-got/master"></a>
     <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="npm bundle size (scoped)" src="https://img.shields.io/bundlephobia/min/@t00nday/nestjs-got?color=#4CC61E"></a>
+    <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="synk vulnerabilities" src="https://img.shields.io/snyk/vulnerabilities/npm/@t00nday/nestjs-got"></a>
 </p>
 
 <details>
