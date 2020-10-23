@@ -4,7 +4,7 @@ import { createReadStream } from 'fs';
 import * as nock from 'nock';
 import * as faker from 'faker';
 import { Got, RequestError } from 'got';
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { getMethods } from '../src/utils';
@@ -249,16 +249,6 @@ describe('GotModule', () => {
                         });
                     },
                 );
-
-                it('error', () => {
-                    streamTestService.error().subscribe({
-                        error(e) {
-                            expect(e).toBeInstanceOf(
-                                InternalServerErrorException,
-                            );
-                        },
-                    });
-                });
             });
 
             describe('PaginationService', () => {

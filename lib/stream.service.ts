@@ -2,8 +2,6 @@ import { Readable } from 'stream';
 
 import { Inject, Injectable } from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions } from 'got';
-import { fromEvent, Observable, throwError } from 'rxjs';
-import { EventListenerOptions } from 'rxjs/internal/observable/fromEvent';
 
 import { GOT_INSTANCE } from './got.constant';
 import { StreamRequest } from './stream.request';

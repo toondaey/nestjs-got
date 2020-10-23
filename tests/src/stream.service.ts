@@ -44,8 +44,4 @@ export class StreamTestService {
             options,
         );
     }
-
-    error() {
-        return this.gotService.stream.on('data');
-    }
 }
