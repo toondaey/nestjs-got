@@ -14,6 +14,7 @@ This is a simple nestjs module that exposes the [got](https://www.npmjs.com/pack
     <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="LICENCE" src="https://img.shields.io/npm/l/@t00nday/nestjs-got"></a>
     <a href="https://circleci.com/gh/toondaey/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="CircleCI build" src="https://img.shields.io/circleci/build/gh/toondaey/nestjs-got/master"></a>
     <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="npm bundle size (scoped)" src="https://img.shields.io/bundlephobia/min/@t00nday/nestjs-got?color=#4CC61E"></a>
+    <a href="https://www.npmjs.com/package/@t00nday/nestjs-got" target="_blank" rel="noopener noreferrer"><img alt="synk vulnerabilities" src="https://img.shields.io/snyk/vulnerabilities/npm/@t00nday/nestjs-got"></a>
 </p>
 
 <details>
@@ -201,13 +202,35 @@ export class ExampleController {
 }
 ```
 
+For more information of the usage pattern, please check [here](https://www.npmjs.com/package/got#pagination-1)
+
 ### Stream
 
-The stream feature is divided into two parts. This is because (and as stated in the documentation [here](https://www.npmjs.com/package/got#streams)), while the stream request is actually a `stream.Duplex` the _GET_ and _HEAD_ requests return a `stream.Readable` and the _POST_, _PUT_, _PATCH_ and _DELETE_ return a `stream.Writable`.
+The stream feature is divided into two parts. This is because (and as stated in the documentation [here](https://www.npmjs.com/package/got#streams)), while the stream request is actually a `stream.Duplex` the _GET_ and _HEAD_ requests return a `stream.Readable` and the _POST_, _PUT_, _PATCH_ and _DELETE_ requests return a `stream.Writable`.
 
-This prompted an implementation that attempts to cover both scenarios. The difference is only present in the arguments acceptable by their respective methods.
+This prompted an implementation that attempts to cover both scenarios. The difference is only present in the arguments acceptable by the respective methods.
 
-Further, this module employs the services of the [split](https://npmjs.com/package/split) package for better optimization and to "break up a stream and reassemble it so that each line is a chunk...". Hence, all methods of stream accept a 3rd argument for the split function configuration.
+Further, all methods of the stream property return a stream request to which we can chain an `on<T>(eventType)` method which in turn returns a [fromEvent](https://rxjs-dev.firebaseapp.com/api/index/function/fromEvent) observable. This affords us the ability to _subscribe_ to events we wish to listen for from the request.
+
+Possible `eventType`s include (and quite constrained to those provided by the **got** package):
+
+-   end
+
+-   data
+
+-   error
+
+-   request
+
+-   readable
+
+-   response
+
+-   redirect
+
+-   uploadProgress
+
+-   downloadProgress
 
 For _GET_ and _HEAD_ stream requests, below is the method signature:
 
@@ -215,15 +238,13 @@ For _GET_ and _HEAD_ stream requests, below is the method signature:
 // This is just used to explain the methods as this code doesn't exist in the package
 import { Observable } from 'rxjs';
 import { StreamOptions } from 'got';
-
-import { SplitOptions } from '@toonday/nestjs-got';
+import { StreamRequest } from '@toonday/nestjs-got/dist/stream.request';
 
 interface StreamInterface {
     [method: string]: <T = unknown>(
         url: string | URL,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
+    ): StreamRequest;
 }
 ```
 
@@ -233,16 +254,14 @@ while that of the _POST_, _PUT_, _PATCH_ and _DELETE_ is:
 // This is just used to explain the methods as this code doesn't exist in the package
 import { Observable } from 'rxjs';
 import { StreamOptions } from 'got';
-
-import { SplitOptions } from '@toonday/nestjs-got';
+import { StreamRequest } from '@toonday/nestjs-got/dist/stream.request';
 
 interface StreamInterface {
     [method: string]: <T = unknown>(
         url: string | URL,
         filePathOrStream?: string | Readable, // This is relative to 'process.cwd()'
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
+    ): StreamRequest<T>;
 }
 ```
 
@@ -255,51 +274,51 @@ export class ExampleController {
 
     controllerMethod() {
         // ...
-        this.gotService.stream.get<TStreamChunk>(
-            someUrl,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .get(someUrl, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // or
-        this.gotService.stream.head<TStreamChunk>(
-            someUrl,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .head(someUrl, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // or
-        this.gotService.pagination.post<TStreamChunk>(
-            someUrl,
-            filePathOrStream,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .post(someUrl, filePathOrStream, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // or
-        this.gotService.pagination.put<TStreamChunk>(
-            someUrl,
-            filePathOrStream,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .put(someUrl, filePathOrStream, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // or
-        this.gotService.pagination.patch<TStreamChunk>(
-            someUrl,
-            filePathOrStream,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .patch(someUrl, filePathOrStream, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // or
-        this.gotService.pagination.delete<TStreamChunk>(
-            someUrl,
-            filePathOrStream,
-            streamOptions,
-            splitOptions,
-        ); // Returns Observable<TStreamChunk>
+        this
+            .gotService
+            .stream
+            .delete(someUrl, filePathOrStream, streamOptions)
+            .on<T>(eventType)
+            .subscribe(subscribeFunction: Function); // Returns Observable<T>
         // ...
     }
 }
 ```
-
-For more information of the usage pattern, please check [here](https://www.npmjs.com/package/got#pagination-1)
 
 ## Contributing
 

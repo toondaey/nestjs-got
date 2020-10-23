@@ -21,6 +21,9 @@
     "release": "dotenv release-it --"
   },
   "keywords": [
+    "nest got",
+    "nest-got",
+    "@nestjs/common",
     "nestjs-got",
     "nestjs got",
     "nestjs-http",
@@ -78,7 +81,7 @@
     }
   },
   "lint-staged": {
-    "*.ts": [
+    "**/*.ts": [
       "prettier --write",
       "npm run lint"
     ]
@@ -93,8 +96,5 @@
   "homepage": "https://github.com/toondaey/nestjs-got#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "split": "1.0.1"
   }
 }

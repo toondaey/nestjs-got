@@ -4,7 +4,9 @@
 # IDE
 /.idea
 /.awcache
-/.vscode/
+/.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
 
 # misc
 npm-debug.log

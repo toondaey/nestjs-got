@@ -4,7 +4,7 @@ import {
     OptionsWithPagination
 } from 'got';
 import { Inject, Injectable } from '@nestjs/common';
-import { Observable, asapScheduler, scheduled } from 'rxjs';
+import { Observable, asapScheduler, scheduled, SchedulerLike } from 'rxjs';
 
 import { GOT_INSTANCE } from './got.constant';
 import { scheduledAsyncIterable } from './addons';
@@ -19,44 +19,49 @@ export class PaginationService extends AbstractService {
     each<T = any, R = unknown>(
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
+        scheduler?: SchedulerLike,
     ): Observable<T> {
-        return this.makeObservable<T, R>('each', url, options);
+        return this.makeObservable<T, R>('each', url, options, scheduler);
     }
 
     all<T = any, R = unknown>(
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
+        scheduler?: SchedulerLike,
     ): Observable<T[]> {
-        return this.makeObservable<T, R>('all', url, options);
+        return this.makeObservable<T, R>('all', url, options, scheduler);
     }
 
     private makeObservable<T, R>(
         method: 'all',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
+        scheduler?: SchedulerLike,
     ): Observable<T[]>;
     private makeObservable<T, R>(
         method: 'each',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
+        scheduler?: SchedulerLike,
     ): Observable<T>;
     private makeObservable<T, R>(
         method: 'each' | 'all',
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
+        scheduler: SchedulerLike = asapScheduler,
     ): Observable<T | T[]> {
         options = { ...options, ...this.defaults, isStream: false };
 
         if (method === 'all') {
             return scheduled(
                 this.got.paginate.all<T, R>(url, options),
-                asapScheduler,
+                scheduler,
             );
         }
 
         return scheduledAsyncIterable<T>(
             this.got.paginate.each<T, R>(url, options),
-            asapScheduler,
+            scheduler,
         );
     }
 }

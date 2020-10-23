@@ -1,14 +1,10 @@
-import { resolve } from 'path';
-import { createReadStream } from 'fs';
-import { Readable, Duplex } from 'stream';
+import { Readable } from 'stream';
 
-import * as split from 'split';
-import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions } from 'got';
 
 import { GOT_INSTANCE } from './got.constant';
-import { SplitOptions } from './got.interface';
+import { StreamRequest } from './stream.request';
 import { AbstractService } from './abstrace.service';
 
 @Injectable()
@@ -17,147 +13,70 @@ export class StreamService extends AbstractService {
         super(got);
     }
 
-    get<T = unknown>(
-        url: string | URL,
-        options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable(
-            'get',
-            url,
-            undefined,
-            options,
-            splitOptions,
-        );
+    get(url: string | URL, options?: StreamOptions): StreamRequest {
+        return this.makeRequest('get', url, undefined, options);
     }
 
-    head<T = unknown>(
-        url: string | URL,
-        options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable(
-            'head',
-            url,
-            undefined,
-            options,
-            splitOptions,
-        );
+    head(url: string | URL, options?: StreamOptions): StreamRequest {
+        return this.makeRequest('head', url, undefined, options);
     }
 
-    delete<T = unknown>(
+    delete(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'delete',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): StreamRequest {
+        return this.makeRequest('delete', url, filePathOrStream, options);
     }
 
-    post<T = unknown>(
+    post(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'post',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): StreamRequest {
+        return this.makeRequest('post', url, filePathOrStream, options);
     }
 
-    patch<T = unknown>(
+    patch(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'patch',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): StreamRequest {
+        return this.makeRequest('patch', url, filePathOrStream, options);
     }
 
-    put<T = unknown>(
+    put(
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T> {
-        return this.makeObservable<T>(
-            'put',
-            url,
-            filePathOrStream,
-            options,
-            splitOptions,
-        );
+    ): StreamRequest {
+        return this.makeRequest('put', url, filePathOrStream, options);
     }
 
-    private makeObservable<T = unknown>(
+    private makeRequest(
         verb: Extract<HTTPAlias, 'get' | 'head'>,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
-    private makeObservable<T = unknown>(
+    ): StreamRequest;
+    private makeRequest(
         verb: Extract<HTTPAlias, 'post' | 'put' | 'patch' | 'delete'>,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        splitOptions?: SplitOptions,
-    ): Observable<T>;
-    private makeObservable<T = unknown>(
+    ): StreamRequest;
+    private makeRequest(
         verb: HTTPAlias,
         url: string | URL,
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
-        { matcher, mapper, options: splitOptions }: SplitOptions = {},
-    ): Observable<T> {
-        const request: Duplex = this.got.stream[verb](url, {
-            ...this.defaults,
-            ...options,
-            isStream: true,
-        });
-
-        // Process requests that are not 'get' or 'head'
-        if (!!~['patch', 'post', 'put', 'delete'].indexOf(verb)) {
-            if (typeof filePathOrStream === 'string') {
-                filePathOrStream = createReadStream(
-                    resolve(process.cwd(), filePathOrStream),
-                );
-                filePathOrStream.on(
-                    'end',
-                    filePathOrStream.destroy.bind(filePathOrStream),
-                );
-            }
-
-            if (filePathOrStream instanceof Readable) {
-                filePathOrStream.on('data', request.write.bind(request));
-                filePathOrStream.on('end', request.end.bind(request));
-            } else {
-                request.end();
-            }
-        }
-
-        return new Observable<T>((subscriber: Subscriber<T>) => {
-            request
-                .pipe(split(matcher, mapper, splitOptions))
-                .on('data', subscriber.next.bind(subscriber))
-                .on('error', subscriber.error.bind(subscriber))
-                .on('end', subscriber.complete.bind(subscriber));
-        });
+    ): StreamRequest {
+        return StreamRequest.create(
+            this.got,
+            verb,
+            url,
+            filePathOrStream,
+            options,
+        );
     }
 }

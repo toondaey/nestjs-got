@@ -1,10 +1,11 @@
+import { Duplex } from 'stream';
+
 import * as faker from 'faker';
-import { Observable } from 'rxjs';
 import { Got, GotStream } from 'got';
-import { Duplex, Readable } from 'stream';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GOT_INSTANCE } from './got.constant';
+import { StreamRequest } from './stream.request';
 import { StreamService } from './stream.service';
 
 describe('StreamService', () => {
@@ -33,25 +34,25 @@ describe('StreamService', () => {
         expect(service).toBeDefined();
     });
 
-    ['get', 'head'].forEach(verb => {
+    ['get', 'head', 'post', 'put', 'patch', 'delete'].forEach(verb => {
         it(`${verb}()`, complete => {
-            class CustomReadable extends Readable {
+            class CustomReadable extends Duplex {
                 _read() {
                     let length = 0;
                     const str = `a
-b
-c
-d
-e
-f
-g
-h
-i
-k
-l
-m
-n
-o`.split(/\n/g);
+    b
+    c
+    d
+    e
+    f
+    g
+    h
+    i
+    k
+    l
+    m
+    n
+    o`.split(/\n/g);
 
                     while (length < str.length) {
                         this.push(str[length]);
@@ -67,44 +68,18 @@ o`.split(/\n/g);
                 [verb]: jest.fn().mockReturnValue(readable),
             };
 
-            (service[verb]<string>(
-                'https://reqres.in/api/users',
-                undefined,
-            ) as Observable<string>).subscribe({
+            const request = service[verb](
+                faker.internet.url(),
+            ) as StreamRequest;
+
+            request.on<Buffer>('data').subscribe({
                 next(response) {
-                    expect(response.toString()).toEqual(expect.any(String));
+                    // prettier-ignore
+                    expect(response.toString())
+                            .toEqual(expect.any(String));
                 },
-                complete,
             });
-        });
-    });
-
-    ['post', 'put', 'patch', 'delete'].forEach(verb => {
-        it(`${verb}()`, complete => {
-            class CustomReadable extends Duplex {
-                _read() {
-                    let length = 10;
-
-                    while (length) {
-                        this.push(length.toString());
-                        length--;
-                    }
-                    this.push(null);
-                }
-            }
-
-            const readable = new CustomReadable();
-
-            (gotInstance.stream as Partial<GotStream>) = {
-                [verb]: jest.fn().mockImplementation(() => readable),
-            };
-
-            service[verb]<Buffer>(faker.internet.url()).subscribe({
-                next(response) {
-                    expect(response).toEqual(expect.any(String));
-                },
-                complete,
-            });
+            request.on('end').subscribe(complete);
         });
     });
 });

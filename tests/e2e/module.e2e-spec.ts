@@ -12,8 +12,9 @@ import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
-import { StreamTestService } from '../src/stream.service';
+import { StreamRequest } from '../../lib/stream.request';
 import { PaginateService } from '../src/paginate.service';
+import { StreamTestService } from '../src/stream.service';
 
 describe('GotModule', () => {
     let module: TestingModule, gotInstance: Got;
@@ -100,8 +101,6 @@ describe('GotModule', () => {
                         });
 
                         const got = appService[key](`${url}/${route}`);
-
-                        expect(appService.gotService.request).toBeTruthy();
 
                         got.subscribe({
                             next(response) {
@@ -195,7 +194,7 @@ describe('GotModule', () => {
             });
 
             describe('StreamService', () => {
-                let streamService: StreamTestService;
+                let streamTestService: StreamTestService;
 
                 beforeEach(async () => {
                     module = await Test.createTestingModule({
@@ -204,7 +203,7 @@ describe('GotModule', () => {
                         exports: [StreamTestService],
                     }).compile();
 
-                    streamService = module.get<StreamTestService>(
+                    streamTestService = module.get<StreamTestService>(
                         StreamTestService,
                     );
                 });
@@ -213,7 +212,6 @@ describe('GotModule', () => {
                     key => {
                         it(`${key}()`, complete => {
                             const uri = faker.internet.url();
-                            let count = 1;
 
                             nock(uri)
                                 [key]('/')
@@ -229,23 +227,26 @@ describe('GotModule', () => {
                                     ),
                                 );
 
-                            (streamService[key](uri) as Observable<
-                                Record<string, any> | string
-                            >).subscribe({
-                                next(response) {
-                                    if (key !== 'post') {
-                                        expect(
-                                            (response as Record<string, any>)
-                                                .id,
-                                        ).toEqual(count++);
-                                    } else {
-                                        expect(response).toEqual(
-                                            expect.any(String),
+                            const streamService = streamTestService[key](
+                                uri,
+                            ) as StreamRequest;
+
+                            streamService.on<Buffer>('data').subscribe({
+                                next(response: Buffer) {
+                                    let start = 0;
+
+                                    response
+                                        .toString()
+                                        .split(/\r?\n/)
+                                        .map<{ id: number }>(e => JSON.parse(e))
+                                        .forEach(e =>
+                                            expect(e.id).toEqual(++start),
                                         );
-                                    }
                                 },
                                 complete,
                             });
+
+                            streamService.on('end').subscribe(complete);
                         });
                     },
                 );

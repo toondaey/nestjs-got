@@ -14,8 +14,6 @@ import { PaginationService } from './paginate.service';
 
 @Injectable()
 export class GotService extends AbstractService {
-    protected _request!: CancelableRequest<Response<any>>;
-
     constructor(
         readonly stream: StreamService,
         @Inject(GOT_INSTANCE) got: Got,
@@ -66,25 +64,24 @@ export class GotService extends AbstractService {
         return this.makeObservable<T>('delete', url, options);
     }
 
-    get request(): CancelableRequest {
-        return this._request;
-    }
-
     private makeObservable<T = any>(
         method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head',
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
-        this._request = this.got[method]<T>(url, {
-            ...options,
-            responseType: 'json',
-            isStream: false,
-            ...this.defaults,
-        });
+        const request: CancelableRequest<Response<T>> = this.got[method]<T>(
+            url,
+            {
+                ...options,
+                responseType: 'json',
+                isStream: false,
+                ...this.defaults,
+            },
+        );
 
         return new Observable<Response<T>>(
             (subscriber: Subscriber<Response<T>>) => {
-                this._request
+                request
                     .then(subscriber.next.bind(subscriber))
                     .catch(subscriber.error.bind(subscriber))
                     .finally(subscriber.complete.bind(subscriber));
