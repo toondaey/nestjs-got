@@ -4,16 +4,16 @@ import { createReadStream } from 'fs';
 import * as nock from 'nock';
 import * as faker from 'faker';
 import { Got, RequestError } from 'got';
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
-import { StreamTestService } from '../src/stream.service';
+import { StreamRequest } from '../../lib/stream.request';
 import { PaginateService } from '../src/paginate.service';
-import { StreamService } from '../../lib/stream.service';
+import { StreamTestService } from '../src/stream.service';
 
 describe('GotModule', () => {
     let module: TestingModule, gotInstance: Got;
@@ -100,8 +100,6 @@ describe('GotModule', () => {
                         });
 
                         const got = appService[key](`${url}/${route}`);
-
-                        expect(appService.gotService.request).toBeTruthy();
 
                         got.subscribe({
                             next(response) {
@@ -211,7 +209,7 @@ describe('GotModule', () => {
 
                 ['get', 'head', 'delete', 'post', 'put', 'patch'].forEach(
                     key => {
-                        it(`${key}()`, () => {
+                        it(`${key}()`, complete => {
                             const uri = faker.internet.url();
 
                             nock(uri)
@@ -230,12 +228,10 @@ describe('GotModule', () => {
 
                             const streamService = streamTestService[key](
                                 uri,
-                            ) as StreamService;
-
-                            expect(streamService.request).toBeTruthy();
+                            ) as StreamRequest;
 
                             streamService.on<Buffer>('data').subscribe({
-                                next(response) {
+                                next(response: Buffer) {
                                     let start = 0;
 
                                     response
@@ -248,20 +244,10 @@ describe('GotModule', () => {
                                 },
                             });
 
-                            streamService.on('end').subscribe();
+                            streamService.on('end').subscribe(complete);
                         });
                     },
                 );
-
-                it('error', () => {
-                    streamTestService.error().subscribe({
-                        error(e) {
-                            expect(e).toBeInstanceOf(
-                                InternalServerErrorException,
-                            );
-                        },
-                    });
-                });
             });
         });
     });

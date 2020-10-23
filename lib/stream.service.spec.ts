@@ -5,6 +5,7 @@ import { Got, GotStream } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GOT_INSTANCE } from './got.constant';
+import { StreamRequest } from './stream.request';
 import { StreamService } from './stream.service';
 
 describe('StreamService', () => {
@@ -70,7 +71,7 @@ o`.split(/\n/g);
             (service[verb]<string>(
                 faker.internet.url(),
                 undefined,
-            ) as StreamService)
+            ) as StreamRequest)
                 .on<Buffer>('data')
                 .subscribe({
                     next(response) {
@@ -100,7 +101,7 @@ o`.split(/\n/g);
                 [verb]: jest.fn().mockImplementation(() => readable),
             };
 
-            (service[verb](faker.internet.url()) as StreamService)
+            (service[verb](faker.internet.url()) as StreamRequest)
                 .on<Buffer>('data')
                 .subscribe({
                     next(response) {

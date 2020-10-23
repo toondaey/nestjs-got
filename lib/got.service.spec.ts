@@ -85,8 +85,6 @@ describe('GotService', () => {
                         expect(error).toBeInstanceOf(HTTPError);
                     },
                 });
-
-                expect(service.request).toBeTruthy();
             });
         }
     });
