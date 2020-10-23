@@ -69,16 +69,19 @@ export class GotService extends AbstractService {
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
     ): Observable<Response<T>> {
-        const request = this.got[method]<T>(url, {
-            ...options,
-            responseType: 'json',
-            isStream: false,
-            ...this.defaults,
-        }) as CancelableRequest<Response<T>>;
+        const request: CancelableRequest<Response<T>> = this.got[method]<T>(
+            url,
+            {
+                ...options,
+                responseType: 'json',
+                isStream: false,
+                ...this.defaults,
+            },
+        );
 
         return new Observable<Response<T>>(
             (subscriber: Subscriber<Response<T>>) => {
-                (request as CancelableRequest<Response<T>>)
+                request
                     .then(subscriber.next.bind(subscriber))
                     .catch(subscriber.error.bind(subscriber))
                     .finally(subscriber.complete.bind(subscriber));
