@@ -4,7 +4,7 @@ import {
     OptionsWithPagination
 } from 'got';
 import { Inject, Injectable } from '@nestjs/common';
-import { Observable, asapScheduler, scheduled, SchedulerLike } from 'rxjs';
+import { Observable, asapScheduler, scheduled, SchedulerLike, iif } from 'rxjs';
 
 import { GOT_INSTANCE } from './got.constant';
 import { scheduledAsyncIterable } from './addons';
@@ -50,18 +50,18 @@ export class PaginationService extends AbstractService {
         options?: OptionsWithPagination<T, R>,
         scheduler: SchedulerLike = asapScheduler,
     ): Observable<T | T[]> {
-        options = { ...options, ...this.defaults, isStream: false };
+        options = { ...options, isStream: false };
 
-        if (method === 'all') {
-            return scheduled(
+        return iif<T[], T>(
+            () => method === 'all',
+            scheduled<T[]>(
                 this.got.paginate.all<T, R>(url, options),
                 scheduler,
-            );
-        }
-
-        return scheduledAsyncIterable<T>(
-            this.got.paginate.each<T, R>(url, options),
-            scheduler,
+            ),
+            scheduledAsyncIterable<T>(
+                this.got.paginate.each<T, R>(url, options),
+                scheduler,
+            ),
         );
     }
 }

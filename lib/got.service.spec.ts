@@ -65,13 +65,9 @@ describe('GotService', () => {
             });
         });
 
-        if (methods.length - 2 === index) {
+        if (methods.length - 1 === index) {
             it('check that defaults is set', () =>
                 expect('options' in service.defaults).toBe(true));
-
-            it('should get request', () => {
-                service[key](faker.internet.url());
-            });
 
             it('should check error reporting', () => {
                 const result: any = { body: {}, statusCode: 400 };

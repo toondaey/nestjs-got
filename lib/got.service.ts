@@ -1,11 +1,12 @@
 import {
     Got,
     Response,
+    HTTPAlias,
     CancelableRequest,
     OptionsOfJSONResponseBody,
 } from 'got';
-import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
+import { asapScheduler, Observable, scheduled, SchedulerLike } from 'rxjs';
 
 import { GOT_INSTANCE } from './got.constant';
 import { StreamService } from './stream.service';
@@ -14,6 +15,8 @@ import { PaginationService } from './paginate.service';
 
 @Injectable()
 export class GotService extends AbstractService {
+    private _request!: CancelableRequest;
+
     constructor(
         readonly stream: StreamService,
         @Inject(GOT_INSTANCE) got: Got,
@@ -25,67 +28,66 @@ export class GotService extends AbstractService {
     head<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('head', url, options);
+        return this.makeObservable<T>('head', url, options, scheduler);
     }
 
     get<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('get', url, options);
+        return this.makeObservable<T>('get', url, options, scheduler);
     }
 
     post<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('post', url, options);
+        return this.makeObservable<T>('post', url, options, scheduler);
     }
 
     put<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('put', url, options);
+        return this.makeObservable<T>('put', url, options, scheduler);
     }
 
     patch<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('patch', url, options);
+        return this.makeObservable<T>('patch', url, options, scheduler);
     }
 
     delete<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('delete', url, options);
+        return this.makeObservable<T>('delete', url, options, scheduler);
     }
 
     private makeObservable<T = any>(
-        method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head',
+        method: HTTPAlias,
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler: SchedulerLike = asapScheduler,
     ): Observable<Response<T>> {
-        const request: CancelableRequest<Response<T>> = this.got[method]<T>(
-            url,
-            {
-                ...options,
-                responseType: 'json',
-                isStream: false,
-                ...this.defaults,
-            },
-        );
+        this._request = this.got[method]<T>(url, {
+            ...options,
+            responseType: 'json',
+            isStream: false,
+        });
 
-        return new Observable<Response<T>>(
-            (subscriber: Subscriber<Response<T>>) => {
-                request
-                    .then(subscriber.next.bind(subscriber))
-                    .catch(subscriber.error.bind(subscriber))
-                    .finally(subscriber.complete.bind(subscriber));
-            },
+        return scheduled<Response<T>>(
+            this._request as CancelableRequest<Response<T>>,
+            scheduler,
         );
     }
 }

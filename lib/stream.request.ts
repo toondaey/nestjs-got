@@ -46,11 +46,7 @@ export class StreamRequest {
         url: string | URL,
         streamOptions?: StreamOptions,
     ): this {
-        this._request = got.stream[verb](url, {
-            ...got.defaults,
-            ...streamOptions,
-            isStream: true,
-        });
+        this._request = got.stream[verb](url, streamOptions);
 
         return this;
     }
