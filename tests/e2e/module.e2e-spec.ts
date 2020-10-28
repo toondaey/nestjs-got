@@ -7,7 +7,6 @@ import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
@@ -242,7 +241,6 @@ describe('GotModule', () => {
                                             expect(e.id).toEqual(++start),
                                         );
                                 },
-                                complete,
                             });
 
                             streamService.on('end').subscribe(complete);

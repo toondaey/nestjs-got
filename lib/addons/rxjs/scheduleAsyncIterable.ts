@@ -1,17 +1,17 @@
-import { Observable, Subscriber, Subscription, SchedulerLike } from 'rxjs';
+import { Observable, Subscriber, SchedulerLike } from 'rxjs';
 
-export const scheduledAsyncIterable = <T = any>(
-    input: AsyncIterable<T> | AsyncGenerator<T>,
+export const scheduledAsyncIterable = <T = any, TReturn = any>(
+    input: AsyncIterator<T, TReturn>,
     scheduler: SchedulerLike,
 ): Observable<T> => {
-    return new Observable<T>((subscriber: Subscriber<T>) => {
-        const subscription = new Subscription();
-        subscription.add(
-            scheduler.schedule(() => {
-                const iterator = input[Symbol.asyncIterator]();
-                subscription.add(
-                    scheduler.schedule(function () {
-                        iterator.next().then((result: IteratorResult<T>) => {
+    return new Observable<T>((subscriber: Subscriber<T>) =>
+        scheduler.schedule<T>(() => {
+            const iterator = input[Symbol.asyncIterator]();
+            subscriber.add(
+                scheduler.schedule<T>(function () {
+                    iterator
+                        .next()
+                        .then((result: IteratorResult<T, TReturn>) => {
                             if (result.done) {
                                 subscriber.complete();
                             } else {
@@ -19,10 +19,8 @@ export const scheduledAsyncIterable = <T = any>(
                                 this.schedule();
                             }
                         });
-                    }),
-                );
-            }),
-        );
-        return subscription;
-    });
+                }),
+            );
+        }),
+    );
 };
