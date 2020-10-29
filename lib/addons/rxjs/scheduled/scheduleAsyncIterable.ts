@@ -3,8 +3,9 @@ import { Observable, Subscriber, SchedulerLike } from 'rxjs';
 export const scheduledAsyncIterable = <T = any, TReturn = any>(
     input: AsyncIterator<T, TReturn>,
     scheduler: SchedulerLike,
-): Observable<T> => {
-    return new Observable<T>((subscriber: Subscriber<T>) =>
+    unsubscriber?: Function | void,
+): Observable<T> =>
+    new Observable<T>((subscriber: Subscriber<T>) => {
         scheduler.schedule<T>(() => {
             const iterator = input[Symbol.asyncIterator]();
             subscriber.add(
@@ -21,6 +22,6 @@ export const scheduledAsyncIterable = <T = any, TReturn = any>(
                         });
                 }),
             );
-        }),
-    );
-};
+        });
+        return unsubscriber;
+    });

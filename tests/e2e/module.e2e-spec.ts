@@ -111,7 +111,7 @@ describe('GotModule', () => {
                         });
 
                         if (appMethods.length - 1 === index) {
-                            it('should check error reporting', complete => {
+                            it('should check error reporting', () => {
                                 uri = faker.internet.url();
                                 const res = {
                                     message: 'Internal server error',
@@ -129,7 +129,6 @@ describe('GotModule', () => {
                                             RequestError,
                                         );
                                         expect(error.code).toEqual(res.code);
-                                        complete();
                                     },
                                 });
                             });

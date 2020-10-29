@@ -76,9 +76,6 @@ describe('GotService', () => {
         });
     });
 
-    it('check that defaults is set', () =>
-        expect('options' in service.defaults).toBe(true));
-
     it('should check error reporting', () => {
         const result: any = { body: {}, statusCode: 400 };
 

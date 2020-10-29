@@ -1,36 +1,31 @@
 import {
     Got,
     Response,
-    HTTPAlias,
-    CancelableRequest,
+    GotRequestFunction,
     OptionsOfJSONResponseBody,
 } from 'got';
 import { Inject, Injectable } from '@nestjs/common';
-import { asapScheduler, Observable, scheduled, SchedulerLike } from 'rxjs';
+import { asapScheduler, Observable, SchedulerLike } from 'rxjs';
 
+import { scheduled } from './addons';
 import { GOT_INSTANCE } from './got.constant';
 import { StreamService } from './stream.service';
-import { AbstractService } from './abstrace.service';
 import { PaginationService } from './paginate.service';
 
 @Injectable()
-export class GotService extends AbstractService {
-    private _request!: CancelableRequest;
-
+export class GotService {
     constructor(
         readonly stream: StreamService,
-        @Inject(GOT_INSTANCE) got: Got,
         readonly pagination: PaginationService,
-    ) {
-        super(got);
-    }
+        @Inject(GOT_INSTANCE) private readonly got: Got,
+    ) {}
 
     head<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('head', url, options, scheduler);
+        return this.makeObservable<T>(this.got.head, url, options, scheduler);
     }
 
     get<T = Record<string, any> | []>(
@@ -38,7 +33,7 @@ export class GotService extends AbstractService {
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('get', url, options, scheduler);
+        return this.makeObservable<T>(this.got.get, url, options, scheduler);
     }
 
     post<T = Record<string, any> | []>(
@@ -46,7 +41,7 @@ export class GotService extends AbstractService {
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('post', url, options, scheduler);
+        return this.makeObservable<T>(this.got.post, url, options, scheduler);
     }
 
     put<T = Record<string, any> | []>(
@@ -54,7 +49,7 @@ export class GotService extends AbstractService {
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('put', url, options, scheduler);
+        return this.makeObservable<T>(this.got.put, url, options, scheduler);
     }
 
     patch<T = Record<string, any> | []>(
@@ -62,7 +57,7 @@ export class GotService extends AbstractService {
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('patch', url, options, scheduler);
+        return this.makeObservable<T>(this.got.patch, url, options, scheduler);
     }
 
     delete<T = Record<string, any> | []>(
@@ -70,24 +65,29 @@ export class GotService extends AbstractService {
         options?: OptionsOfJSONResponseBody,
         scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('delete', url, options, scheduler);
+        return this.makeObservable<T>(this.got.delete, url, options, scheduler);
+    }
+
+    get gotRef(): Got {
+        return this.got;
     }
 
     private makeObservable<T = any>(
-        method: HTTPAlias,
+        got: GotRequestFunction,
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
         scheduler: SchedulerLike = asapScheduler,
     ): Observable<Response<T>> {
-        this._request = this.got[method]<T>(url, {
+        const request = got<T>(url, {
             ...options,
             responseType: 'json',
             isStream: false,
         });
 
-        return scheduled<Response<T>>(
-            this._request as CancelableRequest<Response<T>>,
-            scheduler,
-        );
+        return scheduled(request, scheduler, () => {
+            if (!request.isCanceled) {
+                request.cancel();
+            }
+        });
     }
 }

@@ -14,12 +14,6 @@ describe('GotService', () => {
             options: jest.fn(),
         } as any,
     };
-    const exemptedKeys = [
-        'makeObservable',
-        'request',
-        'defaults',
-        'constructor',
-    ];
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -47,41 +41,42 @@ describe('GotService', () => {
         expect(service).toBeDefined();
     });
 
-    const methods = Object.getOwnPropertyNames(GotService.prototype).filter(
-        key => !~exemptedKeys.indexOf(key),
-    );
+    ['get', 'head', 'put', 'post', 'patch', 'delete'].forEach(
+        (key, index, methods) => {
+            it(`${key}()`, complete => {
+                const result: Partial<Response> = { body: {} };
 
-    methods.forEach((key, index) => {
-        it(`${key}()`, complete => {
-            const result: Partial<Response> = { body: {} };
-
-            gotInstance[key] = jest.fn().mockResolvedValueOnce(result);
-
-            service[key](faker.internet.url()).subscribe({
-                next(response) {
-                    expect(response).toBe(result);
-                },
-                complete,
-            });
-        });
-
-        if (methods.length - 1 === index) {
-            it('check that defaults is set', () =>
-                expect('options' in service.defaults).toBe(true));
-
-            it('should check error reporting', () => {
-                const result: any = { body: {}, statusCode: 400 };
-
-                gotInstance[key] = jest
-                    .fn()
-                    .mockRejectedValueOnce(new HTTPError(result));
+                gotInstance[key] = jest.fn().mockResolvedValueOnce(result);
 
                 service[key](faker.internet.url()).subscribe({
-                    error(error) {
-                        expect(error).toBeInstanceOf(HTTPError);
+                    next(response) {
+                        expect(response).toBe(result);
                     },
+                    error(err) {
+                        console.log(err);
+                    },
+                    complete,
                 });
             });
-        }
-    });
+
+            if (methods.length - 1 === index) {
+                it('gotRef', () =>
+                    expect('defaults' in service.gotRef).toBeTruthy());
+
+                it('should check error reporting', () => {
+                    const result: any = { body: {}, statusCode: 400 };
+
+                    gotInstance[key] = jest
+                        .fn()
+                        .mockRejectedValueOnce(new HTTPError(result));
+
+                    service[key](faker.internet.url()).subscribe({
+                        error(error) {
+                            expect(error).toBeInstanceOf(HTTPError);
+                        },
+                    });
+                });
+            }
+        },
+    );
 });

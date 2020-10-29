@@ -8,20 +8,17 @@ import { Got, HTTPAlias, StreamOptions } from 'got';
 export class StreamRequest {
     private _request!: Duplex;
 
-    private constructor() {
-        //
-    }
-
-    static create(
+    constructor(
         got: Got,
         verb: HTTPAlias,
         url: string | URL,
         file?: string | Readable,
         streamOptions: StreamOptions = {},
-    ): StreamRequest {
-        return new StreamRequest()
-            .createRequest(got, verb, url, streamOptions)
-            .writeToRequest(verb, file);
+    ) {
+        this.createRequest(got, verb, url, streamOptions).writeToRequest(
+            verb,
+            file,
+        );
     }
 
     on<T = unknown>(

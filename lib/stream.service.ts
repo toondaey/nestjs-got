@@ -5,13 +5,10 @@ import { Got, HTTPAlias, StreamOptions } from 'got';
 
 import { GOT_INSTANCE } from './got.constant';
 import { StreamRequest } from './stream.request';
-import { AbstractService } from './abstrace.service';
 
 @Injectable()
-export class StreamService extends AbstractService {
-    constructor(@Inject(GOT_INSTANCE) got: Got) {
-        super(got);
-    }
+export class StreamService {
+    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {}
 
     get(url: string | URL, options?: StreamOptions): StreamRequest {
         return this.makeRequest('get', url, undefined, options);
@@ -71,7 +68,7 @@ export class StreamService extends AbstractService {
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
     ): StreamRequest {
-        return StreamRequest.create(
+        return new StreamRequest(
             this.got,
             verb,
             url,
