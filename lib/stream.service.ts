@@ -8,7 +8,10 @@ import { StreamRequest } from './stream.request';
 
 @Injectable()
 export class StreamService {
-    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {}
+    constructor(
+        @Inject(GOT_INSTANCE) private readonly got: Got,
+        private readonly request: StreamRequest,
+    ) {}
 
     get(url: string | URL, options?: StreamOptions): StreamRequest {
         return this.makeRequest('get', url, undefined, options);
@@ -68,7 +71,7 @@ export class StreamService {
         filePathOrStream?: string | Readable,
         options?: StreamOptions,
     ): StreamRequest {
-        return new StreamRequest(
+        return this.request.process(
             this.got,
             verb,
             url,

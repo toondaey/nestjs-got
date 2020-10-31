@@ -3,6 +3,7 @@ import { createReadStream } from 'fs';
 
 import * as nock from 'nock';
 import * as faker from 'faker';
+import { Observable } from 'rxjs';
 import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -98,7 +99,13 @@ describe('GotModule', () => {
                                 'Content-Type': 'application/json',
                             });
 
-                            const got = appService[key](uri);
+                            const got = appService[key](uri) as Observable<
+                                Record<string, any>
+                            >;
+
+                            expect(
+                                'defaults' in appService.gotService.gotRef,
+                            ).toBe(true);
 
                             got.subscribe({
                                 next(response) {

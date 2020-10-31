@@ -1,4 +1,5 @@
 import * as faker from 'faker';
+import { Observable } from 'rxjs';
 import { Got, HTTPError, Response } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -48,7 +49,9 @@ describe('GotService', () => {
 
                 gotInstance[key] = jest.fn().mockResolvedValueOnce(result);
 
-                service[key](faker.internet.url()).subscribe({
+                (service[key]<Record<string, any>>(
+                    faker.internet.url(),
+                ) as Observable<Record<string, any>>).subscribe({
                     next(response) {
                         expect(response).toBe(result);
                     },

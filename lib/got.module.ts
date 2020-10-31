@@ -8,12 +8,19 @@ import {
 } from './got.interface';
 import { GotService } from './got.service';
 import { StreamService } from './stream.service';
+import { StreamRequest } from './stream.request';
 import { PaginationService } from './paginate.service';
 import { GOT_INSTANCE, GOT_OPTIONS } from './got.constant';
 
 @Module({
     exports: [GotService],
-    providers: [GotService, PaginationService, StreamService],
+    // prettier-ignore
+    providers: [
+        GotService,
+        StreamRequest,
+        StreamService,
+        PaginationService,
+    ]
 })
 export class GotModule {
     static register(options: GotModuleOptions = {}): DynamicModule {

@@ -85,7 +85,11 @@ export class GotService {
         });
 
         return scheduled(request, scheduler, () => {
-            if (!request.isCanceled) {
+            // prettier-ignore
+            if (
+                !request.isCanceled
+                && typeof request.cancel === 'function'
+            ) {
                 request.cancel();
             }
         });

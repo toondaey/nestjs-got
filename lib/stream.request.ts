@@ -1,14 +1,17 @@
 import { resolve } from 'path';
+import { Readable } from 'stream';
 import { createReadStream } from 'fs';
-import { Duplex, Readable } from 'stream';
 
+import Request from 'got/dist/source/core';
+import { Injectable } from '@nestjs/common';
 import { fromEvent, Observable } from 'rxjs';
 import { Got, HTTPAlias, StreamOptions } from 'got';
 
+@Injectable()
 export class StreamRequest {
-    private _request!: Duplex;
+    private _request!: Request;
 
-    constructor(
+    process(
         got: Got,
         verb: HTTPAlias,
         url: string | URL,
@@ -19,6 +22,7 @@ export class StreamRequest {
             verb,
             file,
         );
+        return this;
     }
 
     on<T = unknown>(
