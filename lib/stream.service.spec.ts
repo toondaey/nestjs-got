@@ -20,6 +20,7 @@ describe('StreamService', () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 StreamService,
+                StreamRequest,
                 {
                     provide: GOT_INSTANCE,
                     useValue: gotInstance,

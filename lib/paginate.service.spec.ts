@@ -47,6 +47,7 @@ describe('GotService', () => {
 
         (gotInstance.paginate as Partial<GotPaginate>) = {
             each: jest.fn().mockImplementation(() => asyncIterator()),
+            all: jest.fn().mockResolvedValue([1, 2, 3, 4]),
         };
 
         service.each(faker.internet.url()).subscribe({
@@ -61,6 +62,7 @@ describe('GotService', () => {
 
     it('all()', complete => {
         (gotInstance.paginate as Partial<GotPaginate>) = {
+            each: jest.fn(),
             all: jest.fn().mockResolvedValue([1, 2, 3, 4, 5]),
         };
 
@@ -74,13 +76,11 @@ describe('GotService', () => {
         });
     });
 
-    it('check that defaults is set', () =>
-        expect('options' in service.defaults).toBe(true));
-
     it('should check error reporting', () => {
         const result: any = { body: {}, statusCode: 400 };
 
         (gotInstance.paginate as Partial<GotPaginate>) = {
+            each: jest.fn(),
             all: jest.fn().mockRejectedValueOnce(new HTTPError(result)),
         };
 

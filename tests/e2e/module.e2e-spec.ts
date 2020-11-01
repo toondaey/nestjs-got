@@ -8,7 +8,6 @@ import { Got, RequestError } from 'got';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { getMethods } from '../src/utils';
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
 import { GOT_INSTANCE } from '../../lib/got.constant';
@@ -18,6 +17,8 @@ import { StreamTestService } from '../src/stream.service';
 
 describe('GotModule', () => {
     let module: TestingModule, gotInstance: Got;
+
+    afterEach(() => nock.cleanAll());
 
     describe('test synchronous module registration', () => {
         describe('register()', () => {
@@ -76,7 +77,7 @@ describe('GotModule', () => {
 
         describe('test features', () => {
             describe('GotService', () => {
-                let appService: AppService;
+                let appService: AppService, uri: string;
 
                 beforeEach(async () => {
                     module = await Test.createTestingModule({
@@ -88,58 +89,63 @@ describe('GotModule', () => {
                     appService = module.get<AppService>(AppService);
                 });
 
-                const appMethods = getMethods<AppService>(AppService);
+                ['get', 'post', 'put', 'patch', 'head', 'delete'].forEach(
+                    (key, index, appMethods) => {
+                        it(`${key}()`, complete => {
+                            uri = faker.internet.url();
+                            const res = { random: 'random' };
 
-                appMethods.forEach((key, index) => {
-                    it(`${key}()`, complete => {
-                        const url = faker.internet.url();
-                        const route = faker.internet.domainWord();
-                        const res = { random: 'random' };
+                            nock(uri)[key](`/`).reply(HttpStatus.OK, res, {
+                                'Content-Type': 'application/json',
+                            });
 
-                        nock(url)[key](`/${route}`).reply(HttpStatus.OK, res, {
-                            'Content-Type': 'application/json',
-                        });
+                            const got = appService[key](uri) as Observable<
+                                Record<string, any>
+                            >;
 
-                        const got = appService[key](`${url}/${route}`);
+                            expect(
+                                'defaults' in appService.gotService.gotRef,
+                            ).toBe(true);
 
-                        got.subscribe({
-                            next(response) {
-                                expect(response).toEqual(
-                                    expect.objectContaining({ body: res }),
-                                );
-                            },
-                            complete,
-                        });
-                    });
-
-                    if (appMethods.length - 2 === index) {
-                        it('should check error reporting', complete => {
-                            const url = faker.internet.url();
-                            const route = faker.internet.domainWord();
-                            const res = {
-                                message: 'Invalid params',
-                                get response() {
-                                    return this.message;
+                            got.subscribe({
+                                next(response) {
+                                    expect(response).toEqual(
+                                        expect.objectContaining({ body: res }),
+                                    );
                                 },
-                                code: HttpStatus.BAD_REQUEST,
-                            };
-
-                            nock(url)[key](`/${route}`).replyWithError(res);
-
-                            appService[key](`${url}/${route}`).subscribe({
-                                error(error) {
-                                    expect(error).toBeInstanceOf(RequestError);
-                                    expect(error.code).toEqual(res.code);
-                                    complete();
-                                },
+                                complete,
                             });
                         });
-                    }
-                });
+
+                        if (appMethods.length - 1 === index) {
+                            it('should check error reporting', () => {
+                                uri = faker.internet.url();
+                                const res = {
+                                    message: 'Internal server error',
+                                    get response() {
+                                        return this.message;
+                                    },
+                                    code: HttpStatus.INTERNAL_SERVER_ERROR,
+                                };
+
+                                nock(uri)[key]('/').replyWithError(res);
+
+                                appService[key](uri).subscribe({
+                                    error(error) {
+                                        expect(error).toBeInstanceOf(
+                                            RequestError,
+                                        );
+                                        expect(error.code).toEqual(res.code);
+                                    },
+                                });
+                            });
+                        }
+                    },
+                );
             });
 
             describe('PaginationService', () => {
-                let paginateService: PaginateService;
+                let paginateService: PaginateService, uri: string;
 
                 beforeEach(async () => {
                     module = await Test.createTestingModule({
@@ -153,27 +159,20 @@ describe('GotModule', () => {
                     );
                 });
 
-                const paginateMethod = getMethods<PaginateService>(
-                    PaginateService,
-                );
-
-                paginateMethod.forEach(key => {
+                ['each', 'all'].forEach(key => {
                     it(`${key}()`, async () => {
-                        const url = faker.internet.url();
-                        const route = faker.internet.domainWord();
+                        uri = faker.internet.url();
                         const object = {
                             name: `${faker.name.firstName()} ${faker.name.lastName()}`,
                         };
                         const response = [object];
 
-                        nock(url)
-                            .get(`/${route}`)
-                            .reply(HttpStatus.OK, response, {
-                                'Content-Type': 'application/json',
-                            });
+                        nock(uri).get('/').reply(HttpStatus.OK, response, {
+                            'Content-Type': 'application/json',
+                        });
 
                         if (key === 'all') {
-                            paginateService.all(`${url}/${route}`).subscribe({
+                            paginateService.all(uri).subscribe({
                                 next(res) {
                                     expect(res).toEqual(
                                         expect.arrayContaining(response),
@@ -181,7 +180,7 @@ describe('GotModule', () => {
                                 },
                             });
                         } else {
-                            paginateService.each(`${url}/${route}`).subscribe({
+                            paginateService.each(uri).subscribe({
                                 next(response) {
                                     expect(response).toEqual(
                                         expect.objectContaining(object),
@@ -194,7 +193,7 @@ describe('GotModule', () => {
             });
 
             describe('StreamService', () => {
-                let streamTestService: StreamTestService;
+                let streamTestService: StreamTestService, uri: string;
 
                 beforeEach(async () => {
                     module = await Test.createTestingModule({
@@ -208,10 +207,10 @@ describe('GotModule', () => {
                     );
                 });
 
-                ['get', 'head', 'delete', 'post', 'put', 'patch'].forEach(
+                ['head', 'delete', 'post', 'put', 'patch', 'get'].forEach(
                     key => {
                         it(`${key}()`, complete => {
-                            const uri = faker.internet.url();
+                            uri = faker.internet.url();
 
                             nock(uri)
                                 [key]('/')
@@ -243,7 +242,6 @@ describe('GotModule', () => {
                                             expect(e.id).toEqual(++start),
                                         );
                                 },
-                                complete,
                             });
 
                             streamService.on('end').subscribe(complete);

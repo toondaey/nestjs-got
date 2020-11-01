@@ -1,27 +1,28 @@
 import { resolve } from 'path';
+import { Readable } from 'stream';
 import { createReadStream } from 'fs';
-import { Duplex, Readable } from 'stream';
 
+import Request from 'got/dist/source/core';
+import { Injectable } from '@nestjs/common';
 import { fromEvent, Observable } from 'rxjs';
 import { Got, HTTPAlias, StreamOptions } from 'got';
 
+@Injectable()
 export class StreamRequest {
-    private _request!: Duplex;
+    private _request!: Request;
 
-    private constructor() {
-        //
-    }
-
-    static create(
+    process(
         got: Got,
         verb: HTTPAlias,
         url: string | URL,
         file?: string | Readable,
         streamOptions: StreamOptions = {},
-    ): StreamRequest {
-        return new StreamRequest()
-            .createRequest(got, verb, url, streamOptions)
-            .writeToRequest(verb, file);
+    ) {
+        this.createRequest(got, verb, url, streamOptions).writeToRequest(
+            verb,
+            file,
+        );
+        return this;
     }
 
     on<T = unknown>(
@@ -46,11 +47,7 @@ export class StreamRequest {
         url: string | URL,
         streamOptions?: StreamOptions,
     ): this {
-        this._request = got.stream[verb](url, {
-            ...got.defaults,
-            ...streamOptions,
-            isStream: true,
-        });
+        this._request = got.stream[verb](url, streamOptions);
 
         return this;
     }

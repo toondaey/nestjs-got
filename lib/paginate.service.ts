@@ -1,27 +1,30 @@
 // prettier-ignore
 import {
     Got,
+    GotPaginate,
     OptionsWithPagination
 } from 'got';
 import { Inject, Injectable } from '@nestjs/common';
-import { Observable, asapScheduler, scheduled, SchedulerLike } from 'rxjs';
+import { Observable, asapScheduler, SchedulerLike } from 'rxjs';
 
+import { scheduled } from './addons';
 import { GOT_INSTANCE } from './got.constant';
-import { scheduledAsyncIterable } from './addons';
-import { AbstractService } from './abstrace.service';
 
 @Injectable()
-export class PaginationService extends AbstractService {
-    constructor(@Inject(GOT_INSTANCE) got: Got) {
-        super(got);
-    }
+export class PaginationService {
+    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {}
 
     each<T = any, R = unknown>(
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
         scheduler?: SchedulerLike,
     ): Observable<T> {
-        return this.makeObservable<T, R>('each', url, options, scheduler);
+        return this.makeObservable<T, R>(
+            this.got.paginate.each,
+            url,
+            options,
+            scheduler,
+        );
     }
 
     all<T = any, R = unknown>(
@@ -29,39 +32,36 @@ export class PaginationService extends AbstractService {
         options?: OptionsWithPagination<T, R>,
         scheduler?: SchedulerLike,
     ): Observable<T[]> {
-        return this.makeObservable<T, R>('all', url, options, scheduler);
+        return this.makeObservable<T, R>(
+            this.got.paginate.all,
+            url,
+            options,
+            scheduler,
+        );
     }
 
     private makeObservable<T, R>(
-        method: 'all',
+        paginate: GotPaginate['all'],
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
         scheduler?: SchedulerLike,
     ): Observable<T[]>;
     private makeObservable<T, R>(
-        method: 'each',
+        paginate: GotPaginate['each'],
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
         scheduler?: SchedulerLike,
     ): Observable<T>;
     private makeObservable<T, R>(
-        method: 'each' | 'all',
+        paginate: <T, _R>(
+            ...args: any[]
+        ) => Promise<T[]> | AsyncIterableIterator<T>,
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
         scheduler: SchedulerLike = asapScheduler,
     ): Observable<T | T[]> {
-        options = { ...options, ...this.defaults, isStream: false };
+        options = { ...options, isStream: false };
 
-        if (method === 'all') {
-            return scheduled(
-                this.got.paginate.all<T, R>(url, options),
-                scheduler,
-            );
-        }
-
-        return scheduledAsyncIterable<T>(
-            this.got.paginate.each<T, R>(url, options),
-            scheduler,
-        );
+        return scheduled<T | T[]>(paginate<T, R>(url, options), scheduler);
     }
 }

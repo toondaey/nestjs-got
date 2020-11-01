@@ -1,91 +1,97 @@
 import {
     Got,
     Response,
-    CancelableRequest,
+    GotRequestFunction,
     OptionsOfJSONResponseBody,
 } from 'got';
-import { Observable, Subscriber } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
+import { asapScheduler, Observable, SchedulerLike } from 'rxjs';
 
+import { scheduled } from './addons';
 import { GOT_INSTANCE } from './got.constant';
 import { StreamService } from './stream.service';
-import { AbstractService } from './abstrace.service';
 import { PaginationService } from './paginate.service';
 
 @Injectable()
-export class GotService extends AbstractService {
+export class GotService {
     constructor(
         readonly stream: StreamService,
-        @Inject(GOT_INSTANCE) got: Got,
         readonly pagination: PaginationService,
-    ) {
-        super(got);
-    }
+        @Inject(GOT_INSTANCE) private readonly got: Got,
+    ) {}
 
     head<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('head', url, options);
+        return this.makeObservable<T>(this.got.head, url, options, scheduler);
     }
 
     get<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('get', url, options);
+        return this.makeObservable<T>(this.got.get, url, options, scheduler);
     }
 
     post<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('post', url, options);
+        return this.makeObservable<T>(this.got.post, url, options, scheduler);
     }
 
     put<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('put', url, options);
+        return this.makeObservable<T>(this.got.put, url, options, scheduler);
     }
 
     patch<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('patch', url, options);
+        return this.makeObservable<T>(this.got.patch, url, options, scheduler);
     }
 
     delete<T = Record<string, any> | []>(
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler?: SchedulerLike,
     ): Observable<Response<T>> {
-        return this.makeObservable<T>('delete', url, options);
+        return this.makeObservable<T>(this.got.delete, url, options, scheduler);
+    }
+
+    get gotRef(): Got {
+        return this.got;
     }
 
     private makeObservable<T = any>(
-        method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head',
+        got: GotRequestFunction,
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
+        scheduler: SchedulerLike = asapScheduler,
     ): Observable<Response<T>> {
-        const request: CancelableRequest<Response<T>> = this.got[method]<T>(
-            url,
-            {
-                ...options,
-                responseType: 'json',
-                isStream: false,
-                ...this.defaults,
-            },
-        );
+        const request = got<T>(url, {
+            ...options,
+            responseType: 'json',
+            isStream: false,
+        });
 
-        return new Observable<Response<T>>(
-            (subscriber: Subscriber<Response<T>>) => {
-                request
-                    .then(subscriber.next.bind(subscriber))
-                    .catch(subscriber.error.bind(subscriber))
-                    .finally(subscriber.complete.bind(subscriber));
-            },
-        );
+        return scheduled(request, scheduler, () => {
+            // prettier-ignore
+            if (
+                !request.isCanceled
+                && typeof request.cancel === 'function'
+            ) {
+                request.cancel();
+            }
+        });
     }
 }
