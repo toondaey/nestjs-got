@@ -1,6 +1,6 @@
 import * as faker from 'faker';
 import { Observable } from 'rxjs';
-import { Got, HTTPError, Response } from 'got';
+import { Got, HTTPError } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GotService } from './got.service';
@@ -42,21 +42,22 @@ describe('GotService', () => {
         expect(service).toBeDefined();
     });
 
-    ['get', 'head', 'put', 'post', 'patch', 'delete'].forEach(
+    ['get', 'head', 'post', 'put', 'patch', 'delete'].forEach(
         (key, index, methods) => {
             it(`${key}()`, complete => {
-                const result: Partial<Response> = { body: {} };
+                const result = { body: {} };
+                const mock = Promise.resolve(result);
+                (mock as any).cancel = jest.fn();
 
-                gotInstance[key] = jest.fn().mockResolvedValueOnce(result);
+                gotInstance[key] = jest.fn().mockReturnValueOnce(mock);
 
-                (service[key]<Record<string, any>>(
+                const request = service[key]<Record<string, any>>(
                     faker.internet.url(),
-                ) as Observable<Record<string, any>>).subscribe({
+                ) as Observable<Record<string, any>>;
+
+                request.subscribe({
                     next(response) {
                         expect(response).toBe(result);
-                    },
-                    error(err) {
-                        console.log(err);
                     },
                     complete,
                 });
@@ -68,12 +69,14 @@ describe('GotService', () => {
 
                 it('should check error reporting', () => {
                     const result: any = { body: {}, statusCode: 400 };
+                    const mock = Promise.reject(new HTTPError(result));
+                    (mock as any).cancel = jest.fn();
 
-                    gotInstance[key] = jest
-                        .fn()
-                        .mockRejectedValueOnce(new HTTPError(result));
+                    gotInstance[key] = jest.fn().mockReturnValueOnce(mock);
 
-                    service[key](faker.internet.url()).subscribe({
+                    const request = service[key](faker.internet.url());
+
+                    request.subscribe({
                         error(error) {
                             expect(error).toBeInstanceOf(HTTPError);
                         },

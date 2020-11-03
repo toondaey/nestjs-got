@@ -20,7 +20,7 @@ import { GOT_INSTANCE, GOT_OPTIONS } from './got.constant';
         StreamRequest,
         StreamService,
         PaginationService,
-    ]
+    ],
 })
 export class GotModule {
     static register(options: GotModuleOptions = {}): DynamicModule {

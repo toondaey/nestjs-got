@@ -164,7 +164,7 @@ interface GotInterface {
     [method: string]: ( // i.e. 'get', 'head', 'post', 'put' or 'delete' method
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
-    ) => Observable<Response<T>>;
+    ) => Observable<Response<T>>;;
 }
 ```
 

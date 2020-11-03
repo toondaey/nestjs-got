@@ -72,7 +72,7 @@ export class GotService {
         return this.got;
     }
 
-    private makeObservable<T = any>(
+    private makeObservable<T>(
         got: GotRequestFunction,
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
@@ -84,14 +84,10 @@ export class GotService {
             isStream: false,
         });
 
-        return scheduled(request, scheduler, () => {
-            // prettier-ignore
-            if (
-                !request.isCanceled
-                && typeof request.cancel === 'function'
-            ) {
-                request.cancel();
-            }
-        });
+        return scheduled<Response<T>>(
+            request,
+            scheduler,
+            request.cancel.bind(request),
+        );
     }
 }
