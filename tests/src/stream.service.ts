@@ -7,7 +7,7 @@ import { GotService } from '../../lib';
 
 @Injectable()
 export class StreamTestService {
-    constructor(private readonly gotService: GotService) {}
+    constructor(readonly gotService: GotService) {}
 
     head(url: string, options?: StreamOptions) {
         return this.gotService.stream.head(url, options);

@@ -1,9 +1,5 @@
-// prettier-ignore
-import {
-    OptionsWithPagination,
-    OptionsOfJSONResponseBody,
-} from 'got';
 import { Injectable } from '@nestjs/common';
+import { OptionsOfJSONResponseBody } from 'got';
 
 import { GotService } from '../../lib';
 

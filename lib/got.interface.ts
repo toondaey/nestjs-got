@@ -1,5 +1,6 @@
 import { ExtendOptions } from 'got';
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import { FunctionLike } from './utils';
 
 export type GotModuleOptions = ExtendOptions;
 

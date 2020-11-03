@@ -5,13 +5,14 @@ import { GOT_CONFIG } from '../shared/gotConfig';
 import { ExistingModule } from './existing.module';
 import { GotConfigService } from './got-config.service';
 
-@Module({})
+@Module({
+    exports: [GotModule],
+})
 export class AppModule {
     static withRegister(): DynamicModule {
         return {
             module: AppModule,
             imports: [GotModule.register()],
-            exports: [GotModule],
         };
     }
 
