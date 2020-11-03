@@ -15,8 +15,6 @@ import { PaginationService } from './paginate.service';
 
 @Injectable()
 export class GotService {
-    private _request!: CancelableRequest;
-
     constructor(
         readonly stream: StreamService,
         readonly pagination: PaginationService,
@@ -81,16 +79,16 @@ export class GotService {
         options?: OptionsOfJSONResponseBody,
         scheduler: SchedulerLike = asapScheduler,
     ): Observable<Response<T>> {
-        this._request = got<T>(url, {
+        const request = got<T>(url, {
             ...options,
             responseType: 'json',
             isStream: false,
         });
 
         return scheduled<Response<T>>(
-            this._request as CancelableRequest<Response<T>>,
+            request,
             scheduler,
-            this._request.cancel.bind(this._request),
+            request.cancel.bind(request),
         );
     }
 }
