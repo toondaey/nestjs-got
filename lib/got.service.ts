@@ -1,7 +1,6 @@
 import {
     Got,
     Response,
-    CancelableRequest,
     GotRequestFunction,
     OptionsOfJSONResponseBody,
 } from 'got';

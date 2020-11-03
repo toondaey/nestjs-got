@@ -4,7 +4,7 @@ import { schedulePromise } from './schedulePromise';
 
 describe('schedulePromise()', () => {
     it('', () => {
-        const promised = jest.fn().mockResolvedValue(1) as any;
+        const promised = Promise.resolve(1);
 
         schedulePromise(promised, asapScheduler).subscribe({
             next(v) {

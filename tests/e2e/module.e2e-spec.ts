@@ -228,56 +228,41 @@ describe('GotModule', () => {
                 );
             });
 
-            describe('PaginationService', () => {
-                let paginateService: PaginateService;
+            ['head', 'delete', 'post', 'put', 'patch', 'get'].forEach(key => {
+                it(`${key}()`, complete => {
+                    uri = faker.internet.url();
 
-                beforeEach(async () => {
-                    module = await Test.createTestingModule({
-                        imports: [AppModule.withRegister()],
-                        providers: [PaginateService],
-                        exports: [PaginateService],
-                    }).compile();
+                    nock(uri)
+                        [key]('/')
+                        .reply(HttpStatus.OK, () =>
+                            createReadStream(
+                                join(
+                                    process.cwd(),
+                                    'tests',
+                                    'src',
+                                    'utils',
+                                    'test.txt',
+                                ),
+                            ),
+                        );
 
-                    paginateService = module.get<PaginateService>(
-                        PaginateService,
-                    );
-                });
+                    const streamService = streamTestService[key](
+                        uri,
+                    ) as StreamRequest;
 
-                const paginateMethod = getMethods<PaginateService>(
-                    PaginateService,
-                );
+                    streamService.on<Buffer>('data').subscribe({
+                        next(response: Buffer) {
+                            let start = 0;
 
-                paginateMethod.forEach(key => {
-                    it(`${key}()`, async () => {
-                        const url = faker.internet.url();
-                        const route = faker.internet.domainWord();
-                        const object = {
-                            name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-                        };
-                        const response = [object];
-
-                        nock(url)
-                            .get(`/${route}`)
-                            .reply(HttpStatus.OK, response, {
-                                'Content-Type': 'application/json',
-                            });
-
-                        if (key === 'all') {
-                            paginateService.all(`${url}/${route}`).subscribe({
-                                next(res) {
-                                    expect(res).toEqual(
-                                        expect.arrayContaining(response),
-                                    );
-                                },
-                            });
-                        } else {
-                            expect(
-                                await paginateService
-                                    .each(`${url}/${route}`)
-                                    .toPromise(),
-                            ).toEqual(expect.objectContaining(object));
-                        }
+                            response
+                                .toString()
+                                .split(/\r?\n/)
+                                .map<{ id: number }>(e => JSON.parse(e))
+                                .forEach(e => expect(e.id).toEqual(++start));
+                        },
                     });
+
+                    streamService.on('end').subscribe(complete);
                 });
             });
         });

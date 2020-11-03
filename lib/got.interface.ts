@@ -12,9 +12,7 @@ export interface GotModuleOptionsFactory {
 // prettier-ignore
 export interface GotModuleAsyncOptions
     extends Pick<ModuleMetadata, 'imports'> {
-    useFactory?(
-        ...args: any[]
-    ): GotModuleOptions | Promise<GotModuleOptions>;
+    useFactory?: FunctionLike<GotModuleOptions | Promise<GotModuleOptions>>;
     useClass?: Type<GotModuleOptionsFactory>;
     useExisting?: Type<GotModuleOptionsFactory>;
     inject?: any[];

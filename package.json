@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "rimraf -rf dist && tsc -p tsconfig.json",
-    "lint": "eslint lib/**/*.ts --fix",
+    "lint": "eslint lib/**/*.ts --ignore-pattern lib/**/*.spec.ts --fix",
     "format": "prettier --write **/*.ts",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
@@ -84,7 +84,7 @@
   "lint-staged": {
     "**/*.ts": [
       "prettier --write",
-      "eslint"
+      "npm run lint"
     ]
   },
   "repository": {
