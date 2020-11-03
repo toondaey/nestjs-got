@@ -21,13 +21,7 @@
       "name": "Jest integration test",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}\\node_modules\\jest\\bin\\jest.js",
-      "args": [
-        "-i",
-        "--config",
-        "./tests/jest-e2e.json",
-        "--runInBand",
-        "--coverage"
-      ],
+      "args": ["-i", "--config", "./tests/jest-e2e.json", "--runInBand"],
       "internalConsoleOptions": "openOnFirstSessionStart",
       "preLaunchTask": "npm: build",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]

@@ -3,7 +3,7 @@ import { Observable, Subscriber, SchedulerLike } from 'rxjs';
 export const scheduledAsyncIterable = <T = any, TReturn = any>(
     input: AsyncIterator<T, TReturn>,
     scheduler: SchedulerLike,
-    unsubscriber?: Function | void,
+    unsubscriber?: ((...args: any[]) => any) | void,
 ): Observable<T> =>
     new Observable<T>((subscriber: Subscriber<T>) => {
         scheduler.schedule<T>(() => {

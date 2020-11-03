@@ -17,7 +17,7 @@ export class StreamRequest {
         url: string | URL,
         file?: string | Readable,
         streamOptions: StreamOptions = {},
-    ) {
+    ): this {
         this.createRequest(got, verb, url, streamOptions).writeToRequest(
             verb,
             file,
@@ -61,7 +61,7 @@ export class StreamRequest {
         if (file instanceof Readable) {
             file.on('data', this._request.write.bind(this._request));
             file.on('end', this._request.end.bind(this._request));
-        } else if (!!~['post', 'put', 'patch', 'delete'].indexOf(verb)) {
+        } else if (['post', 'put', 'patch', 'delete'].includes(verb)) {
             this._request.end();
         }
 

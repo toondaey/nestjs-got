@@ -1,6 +1,7 @@
 import {
     Got,
     Response,
+    CancelableRequest,
     GotRequestFunction,
     OptionsOfJSONResponseBody,
 } from 'got';
@@ -14,6 +15,8 @@ import { PaginationService } from './paginate.service';
 
 @Injectable()
 export class GotService {
+    private _request!: CancelableRequest;
+
     constructor(
         readonly stream: StreamService,
         readonly pagination: PaginationService,
@@ -72,26 +75,22 @@ export class GotService {
         return this.got;
     }
 
-    private makeObservable<T = any>(
+    private makeObservable<T>(
         got: GotRequestFunction,
         url: string | URL,
         options?: OptionsOfJSONResponseBody,
         scheduler: SchedulerLike = asapScheduler,
     ): Observable<Response<T>> {
-        const request = got<T>(url, {
+        this._request = got<T>(url, {
             ...options,
             responseType: 'json',
             isStream: false,
         });
 
-        return scheduled(request, scheduler, () => {
-            // prettier-ignore
-            if (
-                !request.isCanceled
-                && typeof request.cancel === 'function'
-            ) {
-                request.cancel();
-            }
-        });
+        return scheduled<Response<T>>(
+            this._request as CancelableRequest<Response<T>>,
+            scheduler,
+            this._request.cancel.bind(this._request),
+        );
     }
 }
