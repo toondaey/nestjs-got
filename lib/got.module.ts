@@ -10,12 +10,16 @@ import { GotService } from './got.service';
 import { StreamService } from './stream.service';
 import { StreamRequest } from './stream.request';
 import { PaginationService } from './paginate.service';
-import { GOT_INSTANCE, GOT_OPTIONS } from './got.constant';
+import { GOT_INSTANCE_TOKEN, GOT_OPTIONS_TOKEN } from './got.constant';
 
 @Module({
     exports: [GotService],
     // prettier-ignore
     providers: [
+        {
+          provide: GOT_INSTANCE_TOKEN,
+          useValue: got,
+        },
         GotService,
         StreamRequest,
         StreamService,
@@ -27,12 +31,9 @@ export class GotModule {
         return {
             module: GotModule,
             providers: [
-                { provide: GOT_OPTIONS, useValue: options },
                 {
-                    provide: GOT_INSTANCE,
-                    useFactory: (config: GotModuleOptions) =>
-                        got.extend(config),
-                    inject: [GOT_OPTIONS],
+                    provide: GOT_INSTANCE_TOKEN,
+                    useValue: got.extend(options),
                 },
             ],
         };
@@ -44,10 +45,10 @@ export class GotModule {
             providers: [
                 ...this.createAsyncProviders(options),
                 {
-                    provide: GOT_INSTANCE,
+                    provide: GOT_INSTANCE_TOKEN,
                     useFactory: (config: GotModuleOptions) =>
                         got.extend(config),
-                    inject: [GOT_OPTIONS],
+                    inject: [GOT_OPTIONS_TOKEN],
                 },
             ],
             imports: options.imports || [],
@@ -72,7 +73,7 @@ export class GotModule {
     ): Provider {
         if (options.useFactory) {
             return {
-                provide: GOT_OPTIONS,
+                provide: GOT_OPTIONS_TOKEN,
                 useFactory: options.useFactory,
                 inject: options.inject || [],
             };
@@ -85,7 +86,7 @@ export class GotModule {
         ];
 
         return {
-            provide: GOT_OPTIONS,
+            provide: GOT_OPTIONS_TOKEN,
             useFactory: (factory: GotModuleOptionsFactory) =>
                 factory.createGotOptions(),
             inject,

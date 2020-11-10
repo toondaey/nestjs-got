@@ -3,13 +3,13 @@ import { Readable } from 'stream';
 import { Inject, Injectable } from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions } from 'got';
 
-import { GOT_INSTANCE } from './got.constant';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { StreamRequest } from './stream.request';
 
 @Injectable()
 export class StreamService {
     constructor(
-        @Inject(GOT_INSTANCE) private readonly got: Got,
+        @Inject(GOT_INSTANCE_TOKEN) private readonly got: Got,
         private readonly request: StreamRequest,
     ) {}
 
