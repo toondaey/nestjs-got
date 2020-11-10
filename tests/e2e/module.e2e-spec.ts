@@ -10,7 +10,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppModule } from '../src/app.module';
 import { AppService } from '../src/app.service';
-import { GOT_INSTANCE } from '../../lib/got.constant';
+import { GOT_INSTANCE_TOKEN } from '../../lib/got.constant';
 import { StreamRequest } from '../../lib/stream.request';
 import { PaginateService } from '../src/paginate.service';
 import { StreamTestService } from '../src/stream.service';
@@ -32,7 +32,7 @@ describe('GotModule', () => {
             });
 
             it('should register got module', async () => {
-                gotInstance = module.get<Got>(GOT_INSTANCE);
+                gotInstance = module.get<Got>(GOT_INSTANCE_TOKEN);
                 expect(AppModule.isGotInstance(gotInstance)).toBeTruthy();
             });
         });
@@ -47,7 +47,7 @@ describe('GotModule', () => {
             });
 
             it('should register got module', async () => {
-                gotInstance = module.get(GOT_INSTANCE);
+                gotInstance = module.get(GOT_INSTANCE_TOKEN);
                 expect(AppModule.isGotInstance(gotInstance)).toBeTruthy();
             });
         });
@@ -60,7 +60,7 @@ describe('GotModule', () => {
             });
 
             it('should register got module', async () => {
-                gotInstance = module.get(GOT_INSTANCE);
+                gotInstance = module.get(GOT_INSTANCE_TOKEN);
                 expect(AppModule.isGotInstance(gotInstance)).toBeTruthy();
             });
         });
@@ -73,7 +73,7 @@ describe('GotModule', () => {
             });
 
             it('should register got module using existing', async () => {
-                gotInstance = module.get(GOT_INSTANCE);
+                gotInstance = module.get(GOT_INSTANCE_TOKEN);
                 expect(AppModule.isGotInstance(gotInstance)).toBeTruthy();
             });
         });
