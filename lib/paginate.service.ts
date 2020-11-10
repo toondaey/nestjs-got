@@ -8,11 +8,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable, asapScheduler, SchedulerLike } from 'rxjs';
 
 import { scheduled } from './addons';
-import { GOT_INSTANCE } from './got.constant';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 
 @Injectable()
 export class PaginationService {
-    constructor(@Inject(GOT_INSTANCE) private readonly got: Got) {}
+    constructor(@Inject(GOT_INSTANCE_TOKEN) private readonly got: Got) {}
 
     each<T = any, R = unknown>(
         url: string | URL,

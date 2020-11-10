@@ -4,8 +4,8 @@ import { Got, HTTPError } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GotService } from './got.service';
-import { GOT_INSTANCE } from './got.constant';
 import { StreamService } from './stream.service';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { PaginationService } from './paginate.service';
 
 describe('GotService', () => {
@@ -21,7 +21,7 @@ describe('GotService', () => {
             providers: [
                 GotService,
                 {
-                    provide: GOT_INSTANCE,
+                    provide: GOT_INSTANCE_TOKEN,
                     useValue: gotInstance,
                 },
                 {

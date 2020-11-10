@@ -4,7 +4,7 @@ import { take } from 'rxjs/operators';
 import { scheduledAsyncIterable } from './scheduleAsyncIterable';
 
 describe('scheduleAsyncIterable()', () => {
-    it('', () => {
+    it('', complete => {
         const iterator = async function* () {
             let i = 1;
             while (true) {
@@ -22,6 +22,7 @@ describe('scheduleAsyncIterable()', () => {
                 next(v) {
                     expect(v).toEqual(count++);
                 },
+                complete,
             });
     });
 });

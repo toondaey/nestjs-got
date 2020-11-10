@@ -4,9 +4,9 @@ import * as faker from 'faker';
 import { Got, GotStream } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { GOT_INSTANCE } from './got.constant';
 import { StreamRequest } from './stream.request';
 import { StreamService } from './stream.service';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 
 describe('StreamService', () => {
     let service: StreamService;
@@ -22,7 +22,7 @@ describe('StreamService', () => {
                 StreamService,
                 StreamRequest,
                 {
-                    provide: GOT_INSTANCE,
+                    provide: GOT_INSTANCE_TOKEN,
                     useValue: gotInstance,
                 },
             ],
