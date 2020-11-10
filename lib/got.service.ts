@@ -8,7 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { asapScheduler, Observable, SchedulerLike } from 'rxjs';
 
 import { scheduled } from './addons';
-import { GOT_INSTANCE } from './got.constant';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { StreamService } from './stream.service';
 import { PaginationService } from './paginate.service';
 
@@ -17,7 +17,7 @@ export class GotService {
     constructor(
         readonly stream: StreamService,
         readonly pagination: PaginationService,
-        @Inject(GOT_INSTANCE) private readonly got: Got,
+        @Inject(GOT_INSTANCE_TOKEN) private readonly got: Got,
     ) {}
 
     head<T = Record<string, any> | []>(
