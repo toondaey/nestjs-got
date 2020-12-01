@@ -45,7 +45,7 @@
     "@nestjs/platform-express": "7.5.5",
     "@nestjs/testing": "7.5.5",
     "@types/faker": "5.1.4",
-    "@types/jest": "26.0.15",
+    "@types/jest": "26.0.16",
     "@types/nock": "11.1.0",
     "@types/node": "13.9.4",
     "@types/rimraf": "3.0.0",
