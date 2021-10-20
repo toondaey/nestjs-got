@@ -63,7 +63,7 @@
     "nock": "13.1.4",
     "prettier": "2.2.1",
     "reflect-metadata": "0.1.13",
-    "release-it": "14.2.2",
+    "release-it": "14.11.6",
     "renovate": "24.10.1",
     "rimraf": "3.0.2",
     "rxjs": "6.6.3",
