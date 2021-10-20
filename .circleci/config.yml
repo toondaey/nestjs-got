@@ -25,7 +25,7 @@ jobs:
   integration_tests_node_10:
     working_directory: ~/nest
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:16
     steps:
       - checkout
       - *update-npm
@@ -45,7 +45,7 @@ jobs:
   integration_tests_node_12:
     working_directory: ~/nest
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:16
     steps:
       - checkout
       - *update-npm
@@ -65,7 +65,7 @@ jobs:
   integration_tests_node_14:
     working_directory: ~/nest
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:16
     steps:
       - checkout
       - *update-npm
@@ -85,7 +85,7 @@ jobs:
   coverage:
     working_directory: ~/nest
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:16
     steps:
       - checkout
       - *update-npm
