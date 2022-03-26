@@ -40,10 +40,10 @@
     "@commitlint/config-conventional": "11.0.0",
     "@commitlint/prompt-cli": "11.0.0",
     "@compodoc/compodoc": "1.1.11",
-    "@nestjs/common": "7.6.18",
-    "@nestjs/core": "7.6.18",
-    "@nestjs/platform-express": "7.6.18",
-    "@nestjs/testing": "7.6.18",
+    "@nestjs/common": "8.4.3",
+    "@nestjs/core": "8.4.3",
+    "@nestjs/platform-express": "8.4.3",
+    "@nestjs/testing": "8.4.3",
     "@types/faker": "5.5.9",
     "@types/jest": "26.0.24",
     "@types/nock": "11.1.0",
@@ -71,7 +71,7 @@
     "typescript": "4.4.4"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.10.0 || ^7.0.0",
+    "@nestjs/common": "^6.10.0 || ^7.0.0 || ^8.0.0",
     "got": "^11.7.0",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.0.0"
