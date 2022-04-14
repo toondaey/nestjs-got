@@ -1,12 +1,8 @@
 {
   "git": {
-    "requireBranch": "master",
-    "changelog": "git log --pretty=format:\"* %s (%h)\" ${from}...${to}",
-    "requireCleanWorkingDir": true,
     "commitMessage": "chore(release): ${version}"
   },
   "npm": {
-    "publish": true,
     "skipChecks": false
   },
   "github": {
