@@ -1,4 +1,4 @@
-import * as faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { Got, GotPaginate, HTTPError } from 'got';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -38,7 +38,7 @@ describe('GotService', () => {
 
     it(`each()`, complete => {
         async function* asyncIterator() {
-            const itemsCount = faker.random.number(20);
+            const itemsCount = faker.datatype.number(20);
 
             for (let _ = 0; _ < itemsCount; _++) {
                 yield { a: faker.random.alphaNumeric() };

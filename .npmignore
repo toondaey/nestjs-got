@@ -1,19 +1,35 @@
 # source
 lib
-tests
+test
 index.ts
 package-lock.json
 tslint.json
 tsconfig.json
+tsconfig.build.json
 .prettierrc
+.prettierignore
+.dev-dependencies
+.dependencies
+.eslintignore
+.dccache
+.env
+.vscode
+.editorconfig
+.release-it.json
+.eslintrc
+.commitlintrc
+pdf-icon.svg
+jest.config.json
 
 # github
 .github
 CONTRIBUTING.md
+README.md
 renovate.json
+.husky
+.lintstagedrc
+LICENCE
 
 # ci
 .circleci
 coverage
-.env
-.editorconfig

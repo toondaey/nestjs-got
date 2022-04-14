@@ -8,8 +8,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { asapScheduler, Observable, SchedulerLike } from 'rxjs';
 
 import { scheduled } from './addons';
-import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { StreamService } from './stream.service';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { PaginationService } from './paginate.service';
 
 @Injectable()

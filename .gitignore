@@ -7,10 +7,12 @@
 /.vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
+.dev-dependencies
 
 # misc
 npm-debug.log
 /**/*.DS_Store
+.dccache
 
 # tests
 /test
