@@ -1,6 +1,6 @@
-import * as faker from 'faker';
 import { Observable } from 'rxjs';
 import { Got, HTTPError } from 'got';
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { GotService } from './got.service';

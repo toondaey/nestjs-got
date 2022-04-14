@@ -1,12 +1,14 @@
 {
-  "moduleFileExtensions": [
-    "js",
-    "ts"
-  ],
+  "globals": {
+    "ts-jest": {
+      "babelConfig": true
+    }
+  },
+  "moduleFileExtensions": ["js", "ts", "json"],
   "rootDir": "../",
   "testEnvironment": "node",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.ts$": "ts-jest"
   },
   "testRegex": "/e2e/.*\\.(e2e-test|e2e-spec).ts$",
   "collectCoverageFrom": [
@@ -17,12 +19,13 @@
   ],
   "coveragePathIgnorePatterns": [
     "./tests",
-    "/node_modules/"
+    "/node_modules/",
+    "libs/**.spec.ts"
   ],
-  "coverageReporters": [
-    "json",
-    "lcov"
+  "transformIgnorePatterns": [
+    "/node_modules/(?!(got|p-cancelable|@szmarczak|lowercase-keys)/)"
   ],
+  "coverageReporters": ["json", "lcov"],
   "coverageThreshold": {
     "global": {
       "branches": 80,

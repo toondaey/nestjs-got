@@ -53,10 +53,10 @@ export class PaginationService {
         scheduler?: SchedulerLike,
     ): Observable<T>;
     private makeObservable<T, R>(
-        paginate: <T, R>(
+        paginate: <TBody, TBodyType>(
             url: string | URL,
-            options: OptionsWithPagination<T, R>,
-        ) => Promise<T[]> | AsyncIterableIterator<T>,
+            options: OptionsWithPagination<TBody, TBodyType>,
+        ) => Promise<TBody[]> | AsyncIterableIterator<TBody>,
         url: string | URL,
         options?: OptionsWithPagination<T, R>,
         scheduler: SchedulerLike = asapScheduler,

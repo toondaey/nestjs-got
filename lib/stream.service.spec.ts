@@ -1,7 +1,7 @@
 import { Duplex } from 'stream';
 
-import * as faker from 'faker';
 import { Got, GotStream } from 'got';
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { StreamRequest } from './stream.request';

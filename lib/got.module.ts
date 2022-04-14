@@ -14,11 +14,10 @@ import { GOT_INSTANCE_TOKEN, GOT_OPTIONS_TOKEN } from './got.constant';
 
 @Module({
     exports: [GotService],
-    // prettier-ignore
     providers: [
         {
-          provide: GOT_INSTANCE_TOKEN,
-          useValue: got,
+            provide: GOT_INSTANCE_TOKEN,
+            useValue: got,
         },
         GotService,
         StreamRequest,
@@ -43,7 +42,7 @@ export class GotModule {
         return {
             module: GotModule,
             providers: [
-                ...this.createAsyncProviders(options),
+                ...GotModule.createAsyncProviders(options),
                 {
                     provide: GOT_INSTANCE_TOKEN,
                     useFactory: (config: GotModuleOptions) =>
@@ -57,13 +56,13 @@ export class GotModule {
 
     static createAsyncProviders(options: GotModuleAsyncOptions): Provider[] {
         if (options.useFactory || options.useExisting) {
-            return [this.createAsyncOptionsProvider(options)];
+            return [GotModule.createAsyncOptionsProvider(options)];
         }
 
         const useClass = options.useClass as Type<GotModuleOptionsFactory>;
 
         return [
-            this.createAsyncOptionsProvider(options),
+            GotModule.createAsyncOptionsProvider(options),
             { provide: useClass, useClass },
         ];
     }
@@ -80,9 +79,8 @@ export class GotModule {
         }
 
         const inject = [
-            (options.useClass || options.useExisting) as Type<
-                GotModuleOptionsFactory
-            >,
+            (options.useClass ||
+                options.useExisting) as Type<GotModuleOptionsFactory>,
         ];
 
         return {
