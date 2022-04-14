@@ -1,18 +1,8 @@
 {
-  "plugins": {
-    "@release-it/conventional-changelog": {
-      "preset": "angular",
-      "infile": "CHANGELOG.md"
-    }
-  },
   "git": {
-    "requireBranch": "master",
-    "changelog": "git log --pretty=format:\"* %s (%h)\" ${from}...${to}",
-    "requireCleanWorkingDir": true,
     "commitMessage": "chore(release): ${version}"
   },
   "npm": {
-    "publish": true,
     "skipChecks": false
   },
   "github": {
