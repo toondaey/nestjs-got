@@ -12,11 +12,7 @@
     "!**/node_modules/**",
     "!**/vendor/**"
   ],
-  "coveragePathIgnorePatterns": [
-    "./tests",
-    "/node_modules/",
-    "libs/**.spec.ts"
-  ],
+  "coveragePathIgnorePatterns": ["./tests", "/node_modules/"],
   "transformIgnorePatterns": [
     "/node_modules/(?!(got|p-cancelable|@szmarczak|lowercase-keys)/)"
   ],
