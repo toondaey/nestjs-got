@@ -39,9 +39,8 @@ export class StreamRequest {
             | 'uploadProgress'
             | 'downloadProgress',
     ): Observable<T> {
-        return fromEvent(
-            /** @todo fix casting */
-            this.stream as JQueryStyleEventEmitter<T, T>,
+        return fromEvent<T>(
+            this.stream as JQueryStyleEventEmitter<any, T>,
             eventName,
         );
     }

@@ -75,9 +75,7 @@ describe('StreamService', () => {
 
             request.on<Buffer>('data').subscribe({
                 next(response) {
-                    // prettier-ignore
-                    expect(response.toString())
-                            .toEqual(expect.any(String));
+                    expect(response.toString()).toEqual(expect.any(String));
                 },
             });
             request.on('end').subscribe(complete);
