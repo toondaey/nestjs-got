@@ -68,7 +68,7 @@
     "@nestjs/platform-express": "8.4.4",
     "@nestjs/testing": "8.4.4",
     "@release-it/conventional-changelog": "4.3.0",
-    "@types/jest": "27.4.1",
+    "@types/jest": "27.5.2",
     "@types/nock": "11.1.0",
     "@types/node": "17.0.24",
     "@types/rimraf": "3.0.2",
