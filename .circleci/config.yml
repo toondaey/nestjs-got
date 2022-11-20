@@ -59,7 +59,7 @@ jobs:
   integration_tests_node_16:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:16.18
     steps:
       - checkout
       - *update-npm
@@ -72,7 +72,7 @@ jobs:
   coverage:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:16.18
     steps:
       - checkout
       - *update-npm
