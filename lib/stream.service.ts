@@ -3,8 +3,8 @@ import { Readable } from 'stream';
 import { Inject, Injectable } from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions } from 'got';
 
-import { GOT_INSTANCE_TOKEN } from './got.constant';
 import { StreamRequest } from './stream.request';
+import { GOT_INSTANCE_TOKEN } from './got.constant';
 
 @Injectable()
 export class StreamService {

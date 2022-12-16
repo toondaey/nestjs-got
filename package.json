@@ -1,25 +1,29 @@
 {
   "name": "@t00nday/nestjs-got",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "A simple nestjs http module built on got",
-  "main": "index.js",
+  "exports": "./index.js",
+  "type": "module",
   "directories": {
     "lib": "lib",
     "tests": "tests"
   },
   "scripts": {
-    "build": "rimraf -rf dist && tsc -p tsconfig.json",
+    "build": "rimraf -rf dist && tsc -p tsconfig.build.json",
     "lint": "eslint lib/**/*.ts --ignore-pattern lib/**/*.spec.ts --fix",
     "format": "prettier --write **/*.ts",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
-    "test:unit": "jest",
+    "test:unit": "jest --runInBand",
+    "test:unit:watch": "jest --watch --runInBand",
+    "test": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:cov": "jest --config ./tests/jest-e2e.json --runInBand --coverage",
     "prerelease": "npm run build",
-    "release": "dotenv release-it --"
+    "release": "dotenv release-it --",
+    "prepare": ".\\.prepare.bat || ./.prepare"
   },
   "keywords": [
     "nest got",
@@ -29,64 +33,17 @@
     "nestjs got",
     "nestjs-http",
     "nestjs http",
-    "ReactiveX",
+    "rxjs",
     "Observer pattern",
     "Observables"
   ],
   "author": "B'Tunde Aromire",
   "license": "MIT",
-  "devDependencies": {
-    "@commitlint/cli": "11.0.0",
-    "@commitlint/config-conventional": "11.0.0",
-    "@commitlint/prompt-cli": "11.0.0",
-    "@compodoc/compodoc": "1.1.11",
-    "@nestjs/common": "7.5.5",
-    "@nestjs/core": "7.5.5",
-    "@nestjs/platform-express": "7.5.5",
-    "@nestjs/testing": "7.5.5",
-    "@types/faker": "5.1.4",
-    "@types/jest": "26.0.15",
-    "@types/nock": "11.1.0",
-    "@types/node": "13.9.4",
-    "@types/rimraf": "3.0.0",
-    "@typescript-eslint/eslint-plugin": "4.8.1",
-    "@typescript-eslint/parser": "4.8.1",
-    "dotenv-cli": "4.0.0",
-    "eslint": "7.14.0",
-    "eslint-config-prettier": "6.15.0",
-    "eslint-plugin-import": "2.22.1",
-    "faker": "5.1.0",
-    "got": "11.8.0",
-    "husky": "4.3.0",
-    "jest": "26.6.3",
-    "lint-staged": "10.5.2",
-    "nock": "13.0.5",
-    "prettier": "2.2.0",
-    "reflect-metadata": "0.1.13",
-    "release-it": "14.2.1",
-    "renovate": "23.84.13",
-    "rimraf": "3.0.2",
-    "rxjs": "6.6.3",
-    "ts-jest": "26.4.4",
-    "typescript": "4.1.2"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^6.10.0 || ^7.0.0",
-    "got": "^11.7.0",
-    "reflect-metadata": "^0.1.12",
-    "rxjs": "^6.0.0"
-  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "**/*.ts": [
-      "prettier --write",
-      "eslint --ignore-pattern lib/**/*.spec.ts --fix"
-    ]
   },
   "repository": {
     "type": "git",
@@ -97,6 +54,51 @@
   },
   "homepage": "https://github.com/toondaey/nestjs-got#readme",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "16.2.3",
+    "@commitlint/config-conventional": "16.2.1",
+    "@commitlint/prompt-cli": "16.2.3",
+    "@compodoc/compodoc": "1.1.19",
+    "@faker-js/faker": "6.1.2",
+    "@nestjs/common": "8.4.4",
+    "@nestjs/core": "8.4.4",
+    "@nestjs/platform-express": "8.4.4",
+    "@nestjs/testing": "8.4.4",
+    "@release-it/conventional-changelog": "4.3.0",
+    "@types/jest": "27.4.1",
+    "@types/nock": "11.1.0",
+    "@types/node": "17.0.24",
+    "@types/rimraf": "3.0.2",
+    "@typescript-eslint/eslint-plugin": "5.19.0",
+    "@typescript-eslint/parser": "5.19.0",
+    "dotenv-cli": "5.1.0",
+    "eslint": "8.13.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "got": "11.8.3",
+    "husky": "7.0.4",
+    "jest": "27.5.1",
+    "lint-staged": "12.3.8",
+    "nock": "13.2.4",
+    "prettier": "2.6.2",
+    "reflect-metadata": "0.1.13",
+    "release-it": "14.14.2",
+    "renovate": "32.25.1",
+    "rimraf": "3.0.2",
+    "rxjs": "7.5.5",
+    "ts-jest": "27.1.4",
+    "typescript": "4.6.3"
+  },
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.10.0 || ^7.0.0 || ^8.0.0",
+    "got": "^11.7.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.0.0 || ^7.0.0"
   }
 }

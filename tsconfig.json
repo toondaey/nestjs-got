@@ -8,11 +8,12 @@
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
-    "sourceMap": false,
+    "target": "es5",
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./lib",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node"
   },
   "include": ["lib/**/*.ts"],
   "exclude": ["node_modules", "tests", "**/*.js", "lib/**/*.spec.ts"]
