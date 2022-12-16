@@ -7,7 +7,6 @@
 /.vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
-.dev-dependencies
 
 # misc
 npm-debug.log
