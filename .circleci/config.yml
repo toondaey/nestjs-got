@@ -10,24 +10,28 @@ aliases:
   - &install-deps
     run:
       name: Install dependencies
-      command: npm install --force --unsafe-perm
+      command: yarn --unsafe-perm
   - &update-npm
     run:
       name: Update NPM version
-      command: 'sudo npm install -g npm@latest'
+      command: "sudo npm install -g npm@latest"
   - &run-lint
     run:
       name: Linting
-      command: npm run lint
+      command: yarn lint
   - &run-integration
     run:
       name: Integration tests
-      command: npm run test:integration
+      command: yarn test:integration
   - &save-cache
     save_cache:
       key: dependency-cache-{{ checksum "package.json" }}
       paths:
         - ./node_modules
+  - &install-yarn
+    run:
+      name: Install yarn
+      command: npm i -g yarn
 
 jobs:
   integration_tests_node_12:
@@ -38,6 +42,7 @@ jobs:
       - checkout
       - *update-npm
       - *restore-cache
+      - *install-yarn
       - *install-deps
       - *save-cache
       - *run-lint
@@ -51,6 +56,7 @@ jobs:
       - checkout
       - *update-npm
       - *restore-cache
+      - *install-yarn
       - *install-deps
       - *save-cache
       - *run-lint
@@ -64,19 +70,54 @@ jobs:
       - checkout
       - *update-npm
       - *restore-cache
+      - *install-yarn
       - *install-deps
       - *save-cache
       - *run-lint
       - *run-integration
 
-  coverage:
+  integration_tests_node_18:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:18.12
     steps:
       - checkout
       - *update-npm
       - *restore-cache
+      - *install-yarn
+      - *install-deps
+      - *save-cache
+      - *run-lint
+      - *run-integration
+
+  integration_tests_node_18_nest_7.x:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12
+    steps:
+      - checkout
+      - *update-npm
+      - *restore-cache
+      - *install-yarn
+      - *install-deps
+      - *save-cache
+      - *run-integration
+      - run:
+          name: Remove latest nestjs
+          command: npm uninstall @nestjs/{common,core,platform-express,testing}
+      - run:
+          name: Install nestjs 7.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^7.0.0
+
+  coverage:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12
+    steps:
+      - checkout
+      - *update-npm
+      - *restore-cache
+      - *install-yarn
       - *install-deps
       - *save-cache
       - run:
