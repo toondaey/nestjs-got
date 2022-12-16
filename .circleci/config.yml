@@ -62,7 +62,7 @@ jobs:
       - *run-lint
       - *run-integration
 
-  integration_tests_node_18_nest_7xx:
+  integration_tests_node_18_nestjs_7xx:
     working_directory: ~/nest
     docker:
       - image: cimg/node:18.12.1
@@ -71,13 +71,27 @@ jobs:
       - *update-npm
       - *install-yarn
       - *install-deps
-      - *run-integration
       - run:
           name: Remove latest nestjs
           command: npm uninstall @nestjs/{common,core,platform-express,testing}
       - run:
           name: Install nestjs 7.x
           command: yarn add -D @nestjs/{common,core,platform-express,testing}@^7.0.0
+      - *run-integration
+
+  integration_tests_node_18_rxjs_6xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install rxjs 6.x
+          command: yarn add -D rxjs@^6.0.0
+      - *run-integration
 
   coverage:
     working_directory: ~/nest
@@ -101,7 +115,8 @@ workflows:
       - integration_tests_node_14
       - integration_tests_node_16
       - integration_tests_node_18
-      - integration_tests_node_18_nest_7xx
+      - integration_tests_node_18_nestjs_7xx
+      - integration_tests_node_18_rxjs_6xx
   coverage:
     jobs:
       - coverage
