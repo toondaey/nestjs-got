@@ -4,9 +4,6 @@ orbs:
   coveralls: coveralls/coveralls@1.0.6
 
 aliases:
-  - &restore-cache
-    restore_cache:
-      key: dependency-cache-{{ checksum "package.json" }}
   - &install-deps
     run:
       name: Install dependencies
@@ -23,11 +20,6 @@ aliases:
     run:
       name: Integration tests
       command: yarn test:integration
-  - &save-cache
-    save_cache:
-      key: dependency-cache-{{ checksum "package.json" }}
-      paths:
-        - ./node_modules
   - &install-yarn
     run:
       name: Install yarn
@@ -40,11 +32,13 @@ jobs:
       - image: cimg/node:12.22.0
     steps:
       - checkout
-      - *update-npm
-      - *restore-cache
-      - *install-yarn
+      - run:
+          name: Update NPM version
+          command: "sudo npm install -g npm@latest"
+      - run:
+          name: Install yarn
+          command: sudo npm i -g --force yarn@1.4.0
       - *install-deps
-      - *save-cache
       - *run-lint
       - *run-integration
 
@@ -55,10 +49,8 @@ jobs:
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
       - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-lint
       - *run-integration
 
@@ -69,10 +61,8 @@ jobs:
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
       - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-lint
       - *run-integration
 
@@ -83,24 +73,20 @@ jobs:
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
       - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-lint
       - *run-integration
 
-  "integration_tests_node_18_nest_7xx":
+  integration_tests_node_18_nest_7xx:
     working_directory: ~/nest
     docker:
       - image: cimg/node:18.12
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
       - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-integration
       - run:
           name: Remove latest nestjs
@@ -116,10 +102,8 @@ jobs:
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
       - *install-yarn
       - *install-deps
-      - *save-cache
       - run:
           name: Test coverage
           command: npm run test:cov
