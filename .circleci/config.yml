@@ -31,7 +31,7 @@ aliases:
   - &install-yarn
     run:
       name: Install yarn
-      command: npm i -g yarn
+      command: sudo npm i -g yarn
 
 jobs:
   integration_tests_node_12:
