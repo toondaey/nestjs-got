@@ -90,7 +90,7 @@ jobs:
       - *run-lint
       - *run-integration
 
-  integration_tests_node_18_nest_7.x:
+  "integration_tests_node_18_nest_7.x":
     working_directory: ~/nest
     docker:
       - image: cimg/node:18.12
