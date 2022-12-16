@@ -72,9 +72,6 @@ jobs:
       - *install-yarn
       - *install-deps
       - run:
-          name: Remove latest nestjs
-          command: npm uninstall @nestjs/{common,core,platform-express,testing}
-      - run:
           name: Install nestjs 7.x
           command: yarn add -D @nestjs/{common,core,platform-express,testing}@^7.0.0
       - *run-integration
