@@ -6,7 +6,6 @@ import Request from 'got/dist/source/core';
 import { fromEvent, Observable } from 'rxjs';
 import { Injectable, Scope } from '@nestjs/common';
 import { Got, HTTPAlias, StreamOptions, GotStream } from 'got';
-import { JQueryStyleEventEmitter } from 'rxjs/internal/observable/fromEvent';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class StreamRequest {
@@ -39,10 +38,7 @@ export class StreamRequest {
             | 'uploadProgress'
             | 'downloadProgress',
     ): Observable<T> {
-        return fromEvent<T>(
-            this.stream as JQueryStyleEventEmitter<any, T>,
-            eventName,
-        );
+        return fromEvent<T>(this.stream, eventName);
     }
 
     private createRequest(
@@ -71,8 +67,4 @@ export class StreamRequest {
 
         return this;
     }
-}
-
-class A {
-    b!: string;
 }

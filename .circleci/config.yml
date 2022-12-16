@@ -4,81 +4,101 @@ orbs:
   coveralls: coveralls/coveralls@1.0.6
 
 aliases:
-  - &restore-cache
-    restore_cache:
-      key: dependency-cache-{{ checksum "package.json" }}
   - &install-deps
     run:
       name: Install dependencies
-      command: npm install --force --unsafe-perm
+      command: yarn --unsafe-perm
   - &update-npm
     run:
       name: Update NPM version
-      command: 'sudo npm install -g npm@latest'
+      command: "sudo npm install -g npm@latest"
   - &run-lint
     run:
       name: Linting
-      command: npm run lint
+      command: yarn lint
   - &run-integration
     run:
       name: Integration tests
-      command: npm run test:integration
-  - &save-cache
-    save_cache:
-      key: dependency-cache-{{ checksum "package.json" }}
-      paths:
-        - ./node_modules
+      command: yarn test:integration
+  - &install-yarn
+    run:
+      name: Install yarn
+      command: sudo npm i -g --force yarn
 
 jobs:
-  integration_tests_node_12:
-    working_directory: ~/nest
-    docker:
-      - image: cimg/node:12.22.0
-    steps:
-      - checkout
-      - *update-npm
-      - *restore-cache
-      - *install-deps
-      - *save-cache
-      - *run-lint
-      - *run-integration
-
   integration_tests_node_14:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:14.19
+      - image: cimg/node:14.21.1
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
+      - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-lint
       - *run-integration
 
   integration_tests_node_16:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:16.18.1
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
+      - *install-yarn
       - *install-deps
-      - *save-cache
       - *run-lint
+      - *run-integration
+
+  integration_tests_node_18:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - *run-lint
+      - *run-integration
+
+  integration_tests_node_18_nestjs_7xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install nestjs 7.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^7.0.0
+      - *run-integration
+
+  integration_tests_node_18_rxjs_6xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install rxjs 6.x
+          command: yarn add -D rxjs@^6.0.0
       - *run-integration
 
   coverage:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:18.12.1
     steps:
       - checkout
       - *update-npm
-      - *restore-cache
+      - *install-yarn
       - *install-deps
-      - *save-cache
       - run:
           name: Test coverage
           command: npm run test:cov
@@ -87,11 +107,13 @@ jobs:
 
 workflows:
   version: 2
-  test:
+  tests:
     jobs:
-      - integration_tests_node_12
       - integration_tests_node_14
       - integration_tests_node_16
+      - integration_tests_node_18
+      - integration_tests_node_18_nestjs_7xx
+      - integration_tests_node_18_rxjs_6xx
   coverage:
     jobs:
       - coverage
