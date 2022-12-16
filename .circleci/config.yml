@@ -34,7 +34,7 @@ jobs:
       - checkout
       - run:
           name: Update NPM version
-          command: "sudo npm install -g npm@latest"
+          command: "sudo npm install -g npm@6.10.2"
       - run:
           name: Install yarn
           command: sudo npm i -g --force yarn@1.4.0
