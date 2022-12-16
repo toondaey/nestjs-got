@@ -26,26 +26,10 @@ aliases:
       command: sudo npm i -g --force yarn
 
 jobs:
-  integration_tests_node_12:
-    working_directory: ~/nest
-    docker:
-      - image: cimg/node:12.22.0
-    steps:
-      - checkout
-      - run:
-          name: Update NPM version
-          command: "sudo npm install -g npm@6.10.2"
-      - run:
-          name: Install yarn
-          command: sudo npm i -g --force yarn@1.4.0
-      - *install-deps
-      - *run-lint
-      - *run-integration
-
   integration_tests_node_14:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:14.19
+      - image: cimg/node:14.21.1
     steps:
       - checkout
       - *update-npm
@@ -57,7 +41,7 @@ jobs:
   integration_tests_node_16:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:16.18.1
     steps:
       - checkout
       - *update-npm
@@ -69,7 +53,7 @@ jobs:
   integration_tests_node_18:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12
+      - image: cimg/node:18.12.1
     steps:
       - checkout
       - *update-npm
@@ -81,7 +65,7 @@ jobs:
   integration_tests_node_18_nest_7xx:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12
+      - image: cimg/node:18.12.1
     steps:
       - checkout
       - *update-npm
@@ -98,7 +82,7 @@ jobs:
   coverage:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12
+      - image: cimg/node:18.12.1
     steps:
       - checkout
       - *update-npm
@@ -112,11 +96,12 @@ jobs:
 
 workflows:
   version: 2
-  test:
+  tests:
     jobs:
-      - integration_tests_node_12
       - integration_tests_node_14
       - integration_tests_node_16
+      - integration_tests_node_18
+      - integration_tests_node_18_nest_7xx
   coverage:
     jobs:
       - coverage
