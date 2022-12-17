@@ -86,7 +86,7 @@ jobs:
       - *install-yarn
       - *install-deps
       - run:
-          name: Install nestjs 7.x
+          name: Install nestjs 8.x
           command: yarn add -D @nestjs/{common,core,platform-express,testing}@^8.0.0
       - *run-integration
 
