@@ -1,6 +1,6 @@
 {
   "name": "@t00nday/nestjs-got",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A simple nestjs http module built on got",
   "exports": "./index.js",
   "type": "module",
@@ -96,7 +96,7 @@
     "node": "^14.0.0 || >=16.0.0 || ^18.0.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.0 || ^8.0.0",
+    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
     "got": "^11.8.6",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.0.0 || ^7.0.0"

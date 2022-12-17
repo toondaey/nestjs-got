@@ -76,6 +76,20 @@ jobs:
           command: yarn add -D @nestjs/{common,core,platform-express,testing}@^7.0.0
       - *run-integration
 
+  integration_tests_node_18_nestjs_8xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install nestjs 7.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^8.0.0
+      - *run-integration
+
   integration_tests_node_18_rxjs_6xx:
     working_directory: ~/nest
     docker:
