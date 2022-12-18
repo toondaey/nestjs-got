@@ -10,10 +10,7 @@ on:
     branches:
       - master
     tags:
-      - v**
-  release:
-    types:
-      - created
+      - "*"
 
 jobs:
   generic-tests:
