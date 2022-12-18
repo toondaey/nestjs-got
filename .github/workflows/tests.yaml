@@ -1,0 +1,51 @@
+name: tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  push:
+    branches:
+      - master
+
+jobs:
+  generic-tests:
+    strategy:
+      fail-fast: true
+      matrix:
+        node:
+          - "14"
+          - "16"
+          - "18"
+
+    runs-on: ubuntu-latest
+    name: Test on node ${{ matrix.node }}
+
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Update npm
+        run: sudo npm install -g npm@latest
+
+      - name: install yarn
+        run: sudo npm install -g --force yarn
+
+      - name: install dependencies
+        run: yarn --unsafe-perm
+
+      - name: run linting
+        run: yarn lint
+
+      - name: run test
+        run: yarn test
+
+      - name: run integration test
+        run: yarn test:integration
