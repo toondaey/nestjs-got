@@ -49,3 +49,65 @@ jobs:
 
       - name: run integration test
         run: yarn test:integration
+
+      - name: run test coverage
+        run: yarn test:cov
+
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ github.token }}
+          flag-name: node-${{ matrix.node }}
+          parallel: true
+
+  support-tests:
+    strategy:
+      fail-fast: true
+      matrix:
+        supported:
+          - "@nestjs/{common,core,platform-express,testing}@^7.0.0"
+          - "@nestjs/{common,core,platform-express,testing}@^8.0.0"
+          - rxjs@^6.0.0
+
+    name: Support for ${{ matrix.supported }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Update npm
+        run: sudo npm install -g npm@latest
+
+      - name: install yarn
+        run: sudo npm install -g --force yarn
+
+      - name: install dependencies
+        run: yarn --unsafe-perm
+
+      - name: update dependencies to support ${{ matrix.supported }}
+        run: yarn add -D ${{ matrix.supported }}
+
+      - name: run test
+        run: yarn test
+
+      - name: run integration test
+        run: yarn test:integration
+
+  finish:
+    needs:
+      - generic-tests
+      - support-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Coveralls finished
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ github.token }}
+          parallel-finished: true
