@@ -6,6 +6,7 @@ on:
       - completed
     workflows:
       - tests
+  push:
     tags:
       - "*"
 
