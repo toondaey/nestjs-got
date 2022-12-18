@@ -34,5 +34,11 @@ jobs:
       - name: Authenticate npm registry
         run: sudo npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
+      - name: install yarn
+        run: sudo npm install -g --force yarn
+
+      - name: install dependencies
+        run: yarn --unsafe-perm
+
       - name: Publish to npm
-        run: npm run release -- --ci
+        run: yarn release --ci
