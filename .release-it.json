@@ -1,12 +1,17 @@
 {
   "git": {
-    "commitMessage": "chore(release): ${version}"
+    "commitMessage": "chore(release): ${version}",
+    "tag": true,
+    "push": true
   },
   "npm": {
-    "skipChecks": false
+    "publish": true,
+    "skipChecks": false,
+    "ignoreVersion": true
   },
   "github": {
+    "publish": true,
     "release": true,
-    "publish": true
+    "releaseName": "Release v${version}"
   }
 }
