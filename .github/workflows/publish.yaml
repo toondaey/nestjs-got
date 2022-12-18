@@ -1,0 +1,33 @@
+name: deploy to npm
+
+on:
+  workflow_run:
+    types:
+      - completed
+    workflows:
+      - tests
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Update npm
+        run: sudo npm install -g npm@latest
+
+      - name: Authenticate npm registry
+        run: sudo npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        run: npm run release -- --ci
