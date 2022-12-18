@@ -4,10 +4,10 @@
   },
   "npm": {
     "publish": true,
-    "skipChecks": false
+    "skipChecks": false,
+    "ignoreVersion": true
   },
   "github": {
-    "release": true,
     "publish": true,
     "releaseName": "Release ${version}"
   }

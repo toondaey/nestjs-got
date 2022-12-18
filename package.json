@@ -54,8 +54,7 @@
   },
   "homepage": "https://github.com/toondaey/nestjs-got#readme",
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "access": "public"
   },
   "devDependencies": {
     "@commitlint/cli": "17.3.0",
