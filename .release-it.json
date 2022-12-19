@@ -1,7 +1,7 @@
 {
   "git": {
     "commitMessage": "chore(release): ${version}",
-    "tag": true,
+    "tag": false,
     "push": true,
     "requireBranch": "master"
   },
