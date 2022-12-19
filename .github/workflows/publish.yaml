@@ -1,9 +1,6 @@
 name: deploy to npm
 
-on:
-  push:
-    tags:
-      - "*"
+on: workflow_dispatch
 
 jobs:
   publish:
@@ -27,7 +24,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Authenticate npm registry
-        run: npm config --global set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN --verbose -g
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
