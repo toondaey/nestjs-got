@@ -8,8 +8,7 @@
   "npm": {
     "publish": true,
     "skipChecks": false,
-    "ignoreVersion": true,
-    "versionArgs": ["from-git"]
+    "ignoreVersion": true
   },
   "github": {
     "publish": true,
