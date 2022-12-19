@@ -3,7 +3,8 @@
     "commitMessage": "chore(release): ${version}",
     "tag": false,
     "push": true,
-    "requireBranch": "master"
+    "requireBranch": "master",
+    "pushArgs": ["--follow-tags", "--force"]
   },
   "npm": {
     "publish": true,
