@@ -32,10 +32,7 @@ jobs:
         run: sudo npm install -g --force yarn
 
       - name: install dependencies
-        run: yarn --unsafe-perm
-
-      - name: list config
-        run: sudo npm config list
+        run: yarn --unsafe-per
 
       - name: Publish to npm
         run: yarn release --ci
