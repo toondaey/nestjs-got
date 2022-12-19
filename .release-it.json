@@ -7,8 +7,7 @@
   },
   "npm": {
     "publish": true,
-    "skipChecks": false,
-    "ignoreVersion": true
+    "skipChecks": false
   },
   "github": {
     "publish": true,
