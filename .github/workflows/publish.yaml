@@ -28,6 +28,9 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: list config
+        run: sudo npm config list
+
       - name: install yarn
         run: sudo npm install -g --force yarn
 
