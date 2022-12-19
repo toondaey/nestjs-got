@@ -24,7 +24,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Authenticate npm registry
-        run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN --verbose -g
+        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN --verbose -g
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
