@@ -23,22 +23,19 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - name: home npmrc
-        run: touch $HOME/.npmrc
-
       - name: Authenticate npm registry
-        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN --verbose -g
+        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: list config
-        run: sudo npm config list
 
       - name: install yarn
         run: sudo npm install -g --force yarn
 
       - name: install dependencies
         run: yarn --unsafe-perm
+
+      - name: list config
+        run: sudo npm config list
 
       - name: Publish to npm
         run: yarn release --ci
