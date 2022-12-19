@@ -33,3 +33,4 @@ LICENCE
 # ci
 .circleci
 coverage
+.npmrc

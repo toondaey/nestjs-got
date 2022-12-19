@@ -1,11 +1,6 @@
 name: deploy to npm
 
 on:
-  workflow_run:
-    types:
-      - completed
-    workflows:
-      - tests
   push:
     tags:
       - "*"
@@ -14,11 +9,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
-
     steps:
       - name: Checkout current
         uses: actions/checkout@v3
@@ -26,13 +16,20 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: "18"
 
       - name: Update npm
         run: sudo npm install -g npm@latest
 
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
       - name: Authenticate npm registry
-        run: sudo npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+        run: npm config --global set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: install yarn
         run: sudo npm install -g --force yarn
@@ -42,3 +39,6 @@ jobs:
 
       - name: Publish to npm
         run: yarn release --ci
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
