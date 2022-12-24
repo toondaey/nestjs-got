@@ -2,6 +2,9 @@ name: deploy to npm
 
 on: workflow_dispatch
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -37,5 +40,5 @@ jobs:
       - name: Publish to npm
         run: yarn release --ci
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
