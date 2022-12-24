@@ -37,6 +37,11 @@ jobs:
       - name: install dependencies
         run: yarn
 
+      - name: set git url
+        run: git remote set-url origin https://toondaey:${GITHUB_TOKEN}@github.com/toondaey/${{ github.repository }}.git
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Publish to npm
         run: yarn release --ci
         env:
