@@ -1,49 +1,26 @@
 name: deploy to npm
 
-on: workflow_dispatch
-
-permissions:
-  contents: write
+on:
+  push:
+    branches:
+      - publish/setup
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout current
+      - name: checkout current
         uses: actions/checkout@v3
 
-      - name: Setup node
+      - name: setup node
         uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      - name: Update npm
-        run: sudo npm install -g npm@latest
+      - name: publish version
+        id: publish_version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
-      - name: git config
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Authenticate npm registry
-        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: install yarn
-        run: sudo npm install -g --force yarn
-
-      - name: install dependencies
-        run: yarn
-
-      - name: set git url
-        run: git remote set-url origin https://toondaey:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Publish to npm
-        run: yarn release --ci
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: npm version bump
+        run: echo ${{ steps.publish_version.outputs.RELEASE_VERSION }}
