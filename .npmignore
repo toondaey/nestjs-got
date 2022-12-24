@@ -1,6 +1,6 @@
 # source
 lib
-test
+tests
 index.ts
 package-lock.json
 tslint.json
@@ -20,6 +20,8 @@ tsconfig.build.json
 .commitlintrc
 pdf-icon.svg
 jest.config.json
+.prepare*
+yarn-error.log
 
 # github
 .github

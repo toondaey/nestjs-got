@@ -2,8 +2,8 @@ name: deploy to npm
 
 on:
   push:
-    branches:
-      - publish/setup
+    tags:
+      - "*.*.*"
 
 jobs:
   publish:
@@ -23,4 +23,18 @@ jobs:
         run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
       - name: npm version bump
-        run: echo ${{ steps.publish_version.outputs.RELEASE_VERSION }}
+        run: npm version ${{ steps.publish_version.outputs.RELEASE_VERSION }}
+
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      #   - name: npm publish
+      #     run: npm run publish:npm
+
+      - name: push to github
+        run: |
+          git add .
+          git commit -m "chore: publish version ${{ steps.publish_version.outputs.RELEASE_VERSION }}"
+          git push
