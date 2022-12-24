@@ -38,7 +38,7 @@ jobs:
         run: yarn
 
       - name: set git url
-        run: git remote set-url origin https://toondaey:${GITHUB_TOKEN}@github.com/toondaey/${{ github.repository }}.git
+        run: git remote set-url origin https://toondaey:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
