@@ -7,7 +7,7 @@
     "requireBranch": "master"
   },
   "npm": {
-    "publish": true,
+    "publish": false,
     "skipChecks": false
   },
   "github": {
