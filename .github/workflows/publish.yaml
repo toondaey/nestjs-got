@@ -22,13 +22,13 @@ jobs:
         id: publish_version
         run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
-      - name: npm version bump
-        run: npm version ${{ steps.publish_version.outputs.RELEASE_VERSION }}
-
       - name: git config
         run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: npm version bump
+        run: npm version --no-git-tag-version ${{ steps.publish_version.outputs.RELEASE_VERSION }}
 
       #   - name: npm publish
       #     run: npm run publish:npm
