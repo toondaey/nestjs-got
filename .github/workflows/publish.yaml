@@ -42,8 +42,8 @@ jobs:
       - name: npm publish
         run: |
           npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
-          npm install
-          npm run release
+          yarn
+          yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
