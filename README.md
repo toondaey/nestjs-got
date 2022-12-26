@@ -41,11 +41,11 @@ Installation is pretty simple and straightforward as all you have to do is run t
 
 -   npm
 
-`npm install --save @t00nday/nestjs-got got`
+`npm install --save @t00nday/nestjs-got got@^11.0.0`
 
 -   yarn
 
-`yarn add @t00nday/nestjs-got got`
+`yarn add @t00nday/nestjs-got got@^11.0.0`
 
 ## Usage
 
