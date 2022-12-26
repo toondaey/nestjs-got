@@ -3,15 +3,14 @@
     "commitMessage": "chore(release): ${version}",
     "tag": false,
     "push": true,
-    "pushArgs": ["--follow-tags"],
     "requireBranch": "master"
   },
   "npm": {
-    "publish": false,
-    "skipChecks": false
+    "publish": true,
+    "skipChecks": false,
+    "ignoreVersion": true
   },
   "github": {
-    "publish": true,
     "release": true,
     "releaseName": "Release v${version}"
   }
