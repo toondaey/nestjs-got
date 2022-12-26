@@ -41,7 +41,7 @@ jobs:
         run: |
           git add .
           git commit -m "chore: publish version ${{ steps.publish_version.outputs.RELEASE_VERSION }}"
-          git push HEAD:${{ github.event.repository.default_branch }}
+          git push origin HEAD:${{ github.event.repository.default_branch }}
 
       - name: npm publish
         run: npm run publish:npm
