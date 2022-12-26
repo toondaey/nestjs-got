@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: checkout current
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: setup node
         uses: actions/setup-node@v3
@@ -27,14 +29,19 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
+      - name: Authenticate npm registry
+        run: sudo npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: npm version bump
         run: npm version --no-git-tag-version ${{ steps.publish_version.outputs.RELEASE_VERSION }}
-
-      #   - name: npm publish
-      #     run: npm run publish:npm
 
       - name: push to github
         run: |
           git add .
           git commit -m "chore: publish version ${{ steps.publish_version.outputs.RELEASE_VERSION }}"
-          git push
+          git push HEAD:${{ github.event.repository.default_branch }}
+
+      - name: npm publish
+        run: npm run publish:npm
