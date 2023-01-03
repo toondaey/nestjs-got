@@ -1,6 +1,6 @@
 {
   "name": "@t00nday/nestjs-got",
-  "version": "2.2.16",
+  "version": "2.2.17",
   "description": "A simple nestjs http module built on got",
   "main": "index.js",
   "directories": {
