@@ -2,15 +2,17 @@
   "git": {
     "commitMessage": "chore(release): ${version}",
     "tag": false,
-    "push": true
+    "push": true,
+    "requireCleanWorkingDir": false
   },
   "npm": {
     "publish": true,
     "skipChecks": false,
-    "ignoreVersion": true
+    "ignoreVersion": false
   },
   "github": {
     "release": true,
+    "tokenRef": "GITHUB_TOKE",
     "releaseName": "Release v${version}"
   }
 }
