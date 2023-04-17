@@ -29,7 +29,7 @@ jobs:
   integration_tests_node_14:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:14.21.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -41,7 +41,7 @@ jobs:
   integration_tests_node_16:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -53,7 +53,7 @@ jobs:
   integration_tests_node_18:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -65,7 +65,7 @@ jobs:
   integration_tests_node_18_nestjs_7xx:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -79,7 +79,7 @@ jobs:
   integration_tests_node_18_nestjs_8xx:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -93,7 +93,7 @@ jobs:
   integration_tests_node_18_rxjs_6xx:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
@@ -107,7 +107,7 @@ jobs:
   coverage:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:19.9.0
     steps:
       - checkout
       - *update-npm
