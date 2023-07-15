@@ -12,7 +12,6 @@ on:
 jobs:
   generic-tests:
     strategy:
-      fail-fast: true
       matrix:
         node:
           - "18"
