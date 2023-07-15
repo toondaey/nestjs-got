@@ -61,6 +61,7 @@
     "rxjs": "^6.0.0 || ^7.0.0"
   },
   "engines": {
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
