@@ -59,6 +59,7 @@ jobs:
       fail-fast: true
       matrix:
         supported:
+          - "rxjs@^6.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^7.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^7.0.0 rxjs@^6.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^8.0.0"
