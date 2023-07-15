@@ -1,17 +1,16 @@
 {
   "git": {
-    "commitMessage": "chore(release): ${version}",
     "tag": false,
     "push": false,
     "commit": false,
-    "requireBranch": "release-*",
+    "requireBranch": ["main", "release-*"],
     "requireCommits": true,
     "requireCleanWorkingDir": true
   },
   "npm": {
-      "publish": true,
+    "publish": true,
     "skipChecks": false,
-    "ignoreVersion": true
+    "versionArgs": ["--allow-same-version", "--workspaces-update=false"]
   },
   "github": {
     "release": false,

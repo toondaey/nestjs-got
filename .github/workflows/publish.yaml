@@ -2,8 +2,9 @@ name: deploy to npm
 
 on:
   push:
-    tags:
-      - "*.*.*"
+    branches:
+      - master
+      - release-*
 
 jobs:
   publish:
@@ -27,7 +28,7 @@ jobs:
 
       - name: npm publish
         run: |
-          npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
           yarn
           yarn release
         env:
