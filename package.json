@@ -19,7 +19,7 @@
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:cov": "jest --config ./tests/jest-e2e.json --runInBand --coverage",
     "prerelease": "npm run build",
-    "release": "dotenv release-it -- --ci",
+    "release": "release-it -- --ci",
     "prepare": ".\\.prepare.bat || ./.prepare"
   },
   "keywords": [
