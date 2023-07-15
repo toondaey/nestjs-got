@@ -65,8 +65,9 @@ jobs:
       matrix:
         supported:
           - "@nestjs/{common,core,platform-express,testing}@^7.0.0"
+          - "@nestjs/{common,core,platform-express,testing}@^7.0.0 rxjs@^6.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^8.0.0"
-          - rxjs@^6.0.0
+          - "@nestjs/{common,core,platform-express,testing}@^8.0.0 rxjs@^6.0.0"
         node:
           - "14"
           - "16"
