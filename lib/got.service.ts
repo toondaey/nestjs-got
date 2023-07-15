@@ -17,7 +17,7 @@ export class GotService {
     constructor(
         readonly stream: StreamService,
         readonly pagination: PaginationService,
-        @Inject(GOT_INSTANCE_TOKEN) private readonly got: Got,
+        @Inject( Symbol('got instance')) private readonly got: Got,
     ) {}
 
     head<T = Record<string, any> | []>(
