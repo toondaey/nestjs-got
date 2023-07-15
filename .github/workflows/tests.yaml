@@ -88,12 +88,10 @@ jobs:
         run: yarn add --ignore-scripts -D ${{ matrix.supported }}
 
       - name: run test
-        run: |
-          yarn
-          yarn test
+        run: npm test
 
       - name: run integration test
-        run: yarn test:integration
+        run: npm run test:integration
 
   finish:
     needs:
