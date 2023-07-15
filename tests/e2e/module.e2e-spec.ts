@@ -1,9 +1,9 @@
 import { join } from 'path';
 import { createReadStream } from 'fs';
 
+import { Got } from 'got';
 import * as nock from 'nock';
 import { Observable } from 'rxjs';
-import { Got, RequestError } from 'got';
 import { faker } from '@faker-js/faker';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -184,7 +184,7 @@ describe('GotModule', () => {
                 it(`${key}()`, async () => {
                     uri = faker.internet.url();
                     const object = {
-                        name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+                        name: `${faker.person.firstName()} ${faker.person.lastName()}`,
                     };
                     const response = [object];
 

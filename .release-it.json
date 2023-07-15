@@ -1,18 +1,20 @@
 {
   "git": {
-    "commitMessage": "chore(release): ${version}",
     "tag": false,
-    "push": true,
-    "requireCleanWorkingDir": false
+    "push": false,
+    "commit": false,
+    "requireBranch": ["main", "release-*"],
+    "requireCommits": true,
+    "requireCleanWorkingDir": true
   },
   "npm": {
     "publish": true,
     "skipChecks": false,
-    "ignoreVersion": false
+    "versionArgs": ["--allow-same-version", "--workspaces-update=false"]
   },
   "github": {
-    "release": true,
-    "tokenRef": "GITHUB_TOKE",
+    "release": false,
+    "tokenRef": "GITHUB_TOKEN",
     "releaseName": "Release v${version}"
   }
 }

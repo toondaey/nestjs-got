@@ -38,10 +38,10 @@ describe('GotService', () => {
 
     it(`each()`, complete => {
         async function* asyncIterator() {
-            const itemsCount = faker.datatype.number(20);
+            const itemsCount = faker.number.int(20);
 
             for (let _ = 0; _ < itemsCount; _++) {
-                yield { a: faker.random.alphaNumeric() };
+                yield { a: faker.string.alphanumeric() };
             }
         }
 

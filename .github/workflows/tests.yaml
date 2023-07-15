@@ -5,18 +5,15 @@ on:
     types:
       - opened
       - reopened
-      - synchronize
     branches:
       - master
+      - release-*
 
 jobs:
   generic-tests:
     strategy:
-      fail-fast: true
       matrix:
         node:
-          - "14"
-          - "16"
           - "18"
 
     runs-on: ubuntu-latest
@@ -31,14 +28,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Update npm
-        run: sudo npm install -g npm@latest
-
       - name: install yarn
         run: sudo npm install -g --force yarn
 
       - name: install dependencies
-        run: yarn --unsafe-perm
+        run: yarn --unsafe-perm --ignore-scripts
 
       - name: run linting
         run: yarn lint
@@ -65,9 +59,13 @@ jobs:
       fail-fast: true
       matrix:
         supported:
+          - "rxjs@^6.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^7.0.0"
+          - "@nestjs/{common,core,platform-express,testing}@^7.0.0 rxjs@^6.0.0"
           - "@nestjs/{common,core,platform-express,testing}@^8.0.0"
-          - rxjs@^6.0.0
+          - "@nestjs/{common,core,platform-express,testing}@^8.0.0 rxjs@^6.0.0"
+        node:
+          - "18"
 
     name: Support for ${{ matrix.supported }}
     runs-on: ubuntu-latest
@@ -81,17 +79,14 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Update npm
-        run: sudo npm install -g npm@latest
-
       - name: install yarn
         run: sudo npm install -g --force yarn
 
       - name: install dependencies
-        run: yarn --unsafe-perm
+        run: yarn --unsafe-perm --ignore-scripts
 
       - name: update dependencies to support ${{ matrix.supported }}
-        run: yarn add -D ${{ matrix.supported }}
+        run: yarn add --ignore-scripts -D ${{ matrix.supported }}
 
       - name: run test
         run: yarn test

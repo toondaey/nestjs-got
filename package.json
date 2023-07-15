@@ -1,6 +1,6 @@
 {
   "name": "@t00nday/nestjs-got",
-  "version": "2.2.19",
+  "version": "2.2.20",
   "description": "A simple nestjs http module built on got",
   "main": "index.js",
   "directories": {
@@ -19,7 +19,7 @@
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:cov": "jest --config ./tests/jest-e2e.json --runInBand --coverage",
     "prerelease": "npm run build",
-    "release": "dotenv release-it -- --ci",
+    "release": "release-it -- --ci",
     "prepare": ".\\.prepare.bat || ./.prepare"
   },
   "keywords": [
@@ -54,48 +54,46 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "devDependencies": {
-    "@commitlint/cli": "17.3.0",
-    "@commitlint/config-conventional": "17.3.0",
-    "@commitlint/prompt-cli": "17.3.0",
-    "@compodoc/compodoc": "1.1.19",
-    "@faker-js/faker": "7.6.0",
-    "@nestjs/common": "9.2.1",
-    "@nestjs/core": "9.2.1",
-    "@nestjs/platform-express": "9.2.1",
-    "@nestjs/testing": "9.2.1",
-    "@release-it/conventional-changelog": "5.1.1",
-    "@types/jest": "29.2.4",
-    "@types/nock": "11.1.0",
-    "@types/node": "18.11.16",
-    "@types/rimraf": "3.0.2",
-    "@typescript-eslint/eslint-plugin": "5.46.1",
-    "@typescript-eslint/parser": "5.46.1",
-    "dotenv-cli": "6.0.0",
-    "eslint": "8.30.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-import": "2.26.0",
-    "got": "11.8.6",
-    "husky": "8.0.2",
-    "jest": "29.3.1",
-    "lint-staged": "13.1.0",
-    "nock": "13.2.9",
-    "prettier": "2.8.1",
-    "reflect-metadata": "0.1.13",
-    "release-it": "15.5.1",
-    "renovate": "34.60.1",
-    "rimraf": "3.0.2",
-    "rxjs": "7.8.0",
-    "ts-jest": "29.0.3",
-    "typescript": "4.9.4"
-  },
-  "engines": {
-    "node": "^14.0.0 || >=16.0.0 || ^18.0.0"
-  },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
     "got": "^11.8.6",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.0.0 || ^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "@commitlint/prompt-cli": "^17.6.6",
+    "@compodoc/compodoc": "^1.1.21",
+    "@faker-js/faker": "^8.0.2",
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/core": "^8.0.0",
+    "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/testing": "^8.0.0",
+    "@release-it/conventional-changelog": "^7.0.0",
+    "@types/jest": "^29.5.3",
+    "@types/node": "^20.4.2",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "dotenv-cli": "^7.2.1",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "got": "^11.8.6",
+    "husky": "^8.0.3",
+    "jest": "^29.6.1",
+    "lint-staged": "^13.2.3",
+    "nock": "^13.3.2",
+    "prettier": "^3.0.0",
+    "reflect-metadata": "^0.1.13",
+    "release-it": "^16.1.0",
+    "renovate": "^36.8.11",
+    "rimraf": "^5.0.1",
+    "rxjs": "^7.8.1",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.1.6"
   }
 }
