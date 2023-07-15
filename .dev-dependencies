@@ -9,9 +9,7 @@
 @faker-js/faker
 @release-it/conventional-changelog
 @types/jest
-@types/nock
 @types/node
-@types/rimraf
 @typescript-eslint/eslint-plugin
 @typescript-eslint/parser
 dotenv-cli
