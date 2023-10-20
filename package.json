@@ -60,10 +60,10 @@
     "@commitlint/prompt-cli": "17.3.0",
     "@compodoc/compodoc": "1.1.19",
     "@faker-js/faker": "7.6.0",
-    "@nestjs/common": "9.2.1",
-    "@nestjs/core": "9.2.1",
-    "@nestjs/platform-express": "9.2.1",
-    "@nestjs/testing": "9.2.1",
+    "@nestjs/common": "10.2.7",
+    "@nestjs/core": "10.2.7",
+    "@nestjs/platform-express": "10.2.7",
+    "@nestjs/testing": "10.2.7",
     "@release-it/conventional-changelog": "5.1.1",
     "@types/jest": "29.2.4",
     "@types/nock": "11.1.0",
@@ -90,10 +90,10 @@
     "typescript": "4.9.4"
   },
   "engines": {
-    "node": "^14.0.0 || >=16.0.0 || ^18.0.0"
+    "node": "^14.0.0 || >=16.0.0 || ^18.0.0 || ^20.0.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
+    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0",
     "got": "^11.8.6",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.0.0 || ^7.0.0"
