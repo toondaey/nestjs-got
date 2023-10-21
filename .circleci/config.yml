@@ -90,6 +90,34 @@ jobs:
           command: yarn add -D @nestjs/{common,core,platform-express,testing}@^8.0.0
       - *run-integration
 
+  integration_tests_node_18_nestjs_9xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install nestjs 9.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^9.0.0
+      - *run-integration
+
+  integration_tests_node_18_nestjs_10xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install nestjs 10.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^10.0.0
+      - *run-integration
+
   integration_tests_node_18_rxjs_6xx:
     working_directory: ~/nest
     docker:
@@ -103,11 +131,38 @@ jobs:
           name: Install rxjs 6.x
           command: yarn add -D rxjs@^6.0.0
       - *run-integration
+  
+  integration_tests_node_20:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:20.8.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - *run-lint
+      - *run-integration
+  
+  
+  integration_tests_node_20_nestjs_10xx:
+    working_directory: ~/nest
+    docker:
+      - image: cimg/node:20.8.1
+    steps:
+      - checkout
+      - *update-npm
+      - *install-yarn
+      - *install-deps
+      - run:
+          name: Install nestjs 10.x
+          command: yarn add -D @nestjs/{common,core,platform-express,testing}@^10.0.0
+      - *run-integration
 
   coverage:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:20.8.1
     steps:
       - checkout
       - *update-npm
@@ -128,6 +183,11 @@ workflows:
       - integration_tests_node_18
       - integration_tests_node_18_nestjs_7xx
       - integration_tests_node_18_rxjs_6xx
+      - integration_tests_node_18_nestjs_9xx
+      - integration_tests_node_18_nestjs_10xx
+      - integration_tests_node_20
+      - integration_tests_node_20_nestjs_10xx
+
   coverage:
     jobs:
       - coverage
