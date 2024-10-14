@@ -58,7 +58,7 @@
     "@commitlint/cli": "17.3.0",
     "@commitlint/config-conventional": "17.3.0",
     "@commitlint/prompt-cli": "17.3.0",
-    "@compodoc/compodoc": "1.1.19",
+    "@compodoc/compodoc": "1.1.26",
     "@faker-js/faker": "7.6.0",
     "@nestjs/common": "9.2.1",
     "@nestjs/core": "9.2.1",
