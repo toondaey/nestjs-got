@@ -67,7 +67,7 @@
     "@release-it/conventional-changelog": "5.1.1",
     "@types/jest": "29.2.4",
     "@types/nock": "11.1.0",
-    "@types/node": "18.11.16",
+    "@types/node": "18.19.56",
     "@types/rimraf": "3.0.2",
     "@typescript-eslint/eslint-plugin": "5.46.1",
     "@typescript-eslint/parser": "5.46.1",
